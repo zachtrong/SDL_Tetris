@@ -2,8 +2,8 @@
 
 class Constants {
 private:
-  Constants();
-  virtual ~Constants();
+	Constants();
+	virtual ~Constants();
 public:
-  static const char* GAME_TITLE;
+	static const char* GAME_TITLE;
 };

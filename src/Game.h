@@ -10,8 +10,8 @@ const int SCREEN_HEIGHT = 480;
 
 class Game {
 public:
-  Game();
-  virtual ~Game();
+	Game();
+	virtual ~Game();
 
-  static void start();
+	static void start();
 };
