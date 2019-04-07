@@ -4,7 +4,11 @@
 
 using namespace std;
 
-Game::Game() {
+shared_ptr<Game> Game::instance(nullptr);
+
+Game::Game(): 
+	window(nullptr),
+	screenSurface(nullptr) {
 
 }
 
@@ -12,14 +16,37 @@ Game::~Game() {
 	SDL_Quit();
 }
 
-void Game::start() {
-	shared_ptr<SDL_Window> window(nullptr);
-	shared_ptr<SDL_Surface> screenSurface(nullptr);
+shared_ptr<Game> Game::getInstance() {
+	if (instance == nullptr) {
+		instance = make_shared<Game>();
+	}
+	return instance;
+}
 
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		printf("error initializing SDL: %s\n", SDL_GetError());
+void Game::start() {
+	try {
+		init();
+	} catch (...) {
+		printf("Something went wrong!");
 		return;
 	}
+	
+	drawBackground();
+
+	printf("initialization successful!\n");
+	system("pause");
+}
+
+void Game::init() {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		throw SDL_GetError();
+		return;
+	}
+	initWindow();
+	initScreenSurface();
+}
+
+void Game::initWindow() {
 	window = PointerDefinition::createSdlWindowPointer(
 		SDL_CreateWindow(
 			Constants::GAME_TITLE, 
@@ -30,17 +57,20 @@ void Game::start() {
 			SDL_WINDOW_SHOWN
 		)
 	);
-	if (window.get() == NULL) {
-		printf("Window could not create: %s\n", SDL_GetError());
+	if (window == nullptr) {
+		throw SDL_GetError();
 		return;
 	}
+}
+
+void Game::initScreenSurface() {
 	screenSurface = PointerDefinition::createSdlSurfacePointer(
 		SDL_GetWindowSurface(window.get())
 	);
+}
+
+void Game::drawBackground() {
 	SDL_FillRect(screenSurface.get(), NULL, SDL_MapRGB(screenSurface->format, 0xff, 0xff, 0xff));
 	SDL_UpdateWindowSurface(window.get());
 	SDL_Delay(2000);
-
-	printf("initialization successful!\n");
-	system("pause");
 }
