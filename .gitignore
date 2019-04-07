@@ -1,0 +1,16 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Builds
+build/
+release/
+.vs/
+.vscode/
