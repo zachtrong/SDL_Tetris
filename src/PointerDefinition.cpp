@@ -26,6 +26,6 @@ shared_ptr<SDL_Texture> PointerDefinition::createSdlTexturePointer(SDL_Texture *
 }
 
 shared_ptr<SDL_Surface> PointerDefinition::createSdlSurfacePointer(SDL_Surface *p) {
-	shared_ptr<SDL_Surface> res(p);
+	shared_ptr<SDL_Surface> res(p, SDL_FreeSurface);
 	return res;
 }
