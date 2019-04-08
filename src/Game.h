@@ -33,5 +33,6 @@ public:
 	void initRenderer();
 	void initImage();
 	void initTexture();
+	void drawRedFilledQuad();
 	SDL_Texture* loadBackgroundTexture();
 };
