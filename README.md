@@ -8,5 +8,5 @@ scripts/build.bat
 scripts/run.bat
 
 # Note
-Project uses smart pointer and various advanced techniques
+Project uses smart pointer and various advanced techniques known as design pattern
 So be careful to understand before implement
