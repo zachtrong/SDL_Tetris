@@ -9,8 +9,11 @@ private:
 	PointerDefinition();
 	virtual ~PointerDefinition();
 public:
-	static shared_ptr<SDL_Window> createSdlWindowPointer(SDL_Window *p);
-	static shared_ptr<SDL_Renderer> createSdlRendererPointer(SDL_Renderer *p);
-	static shared_ptr<SDL_Surface> createSdlSurfacePointer(SDL_Surface *p);
-	static shared_ptr<SDL_Texture> createSdlTexturePointer(SDL_Texture *p);
+	static shared_ptr<SDL_Window> createSdlWindow(SDL_Window *p);
+	static shared_ptr<SDL_Renderer> createSdlRenderer(SDL_Renderer *p);
+	/*
+		depricated: use SDL_Texture instead of SDL_Surface
+	*/
+	static shared_ptr<SDL_Surface> createSdlSurface(SDL_Surface *p);
+	static shared_ptr<SDL_Texture> createSdlTexture(SDL_Texture *p);
 };

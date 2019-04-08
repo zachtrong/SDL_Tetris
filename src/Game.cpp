@@ -1,18 +1,20 @@
 #include "Game.h"
-#include "Constants.h"
-#include "PointerDefinition.h"
 
 using namespace std;
 
+const int Game::SCREEN_WIDTH = 640;
+const int Game::SCREEN_HEIGHT = 800;
 shared_ptr<Game> Game::instance(nullptr);
 
 Game::Game(): 
 	window(nullptr),
-	screenSurface(nullptr) {
+	renderer(nullptr),
+	texture(nullptr) {
 
 }
 
 Game::~Game() {
+	IMG_Quit();
 	SDL_Quit();
 }
 
@@ -26,28 +28,33 @@ shared_ptr<Game> Game::getInstance() {
 void Game::start() {
 	try {
 		init();
-	} catch (...) {
-		printf("Something went wrong!");
+	} catch (const Exception &e) {
+		printf("Something went wrong!!! %s", e.what());
+		return;
+	} catch (const char* message) {
+		printf("What a Terrible Failure, %s", message);
 		return;
 	}
-	
-	drawBackground();
 
 	printf("initialization successful!\n");
-	system("pause");
+	
+	drawBackground();
+	processEvent();
 }
 
 void Game::init() {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		throw SDL_GetError();
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+		throw new Exception(SDL_GetError());
 		return;
 	}
 	initWindow();
-	initScreenSurface();
+	initRenderer();
+	initImage();
+	initTexture();
 }
 
 void Game::initWindow() {
-	window = PointerDefinition::createSdlWindowPointer(
+	window = PointerDefinition::createSdlWindow(
 		SDL_CreateWindow(
 			Constants::GAME_TITLE, 
 			SDL_WINDOWPOS_UNDEFINED, 
@@ -58,19 +65,57 @@ void Game::initWindow() {
 		)
 	);
 	if (window == nullptr) {
-		throw SDL_GetError();
-		return;
+		throw new Exception(SDL_GetError());
 	}
 }
 
-void Game::initScreenSurface() {
-	screenSurface = PointerDefinition::createSdlSurfacePointer(
-		SDL_GetWindowSurface(window.get())
+void Game::initRenderer() {
+	renderer = PointerDefinition::createSdlRenderer(
+		SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED)
 	);
+	if (renderer == nullptr) {
+		throw new Exception(SDL_GetError());
+	}
+}
+
+void Game::initImage() {
+	int imageFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imageFlags) && imageFlags)) {
+		throw new Exception(IMG_GetError());
+	}
+}
+
+void Game::initTexture() {
+	texture = PointerDefinition::createSdlTexture(
+		loadBackgroundTexture()
+	);
+	if (texture == nullptr) {
+		throw new Exception(SDL_GetError());
+	}
+}
+
+SDL_Texture* Game::loadBackgroundTexture() {
+	shared_ptr<SDL_Surface> loadedSurface(IMG_Load("assets/textures/tile.png"));
+	if (loadedSurface == nullptr) {
+		throw new Exception(IMG_GetError());
+	}
+	return SDL_CreateTextureFromSurface(renderer.get(), loadedSurface.get());
 }
 
 void Game::drawBackground() {
-	SDL_FillRect(screenSurface.get(), NULL, SDL_MapRGB(screenSurface->format, 0xff, 0xff, 0xff));
-	SDL_UpdateWindowSurface(window.get());
-	SDL_Delay(2000);
+	SDL_SetRenderDrawColor(renderer.get(), 0xff, 0xff, 0xff, 0xff);
+
+	SDL_RenderClear(renderer.get());
+	SDL_RenderCopy(renderer.get(), texture.get(), NULL, NULL);
+	SDL_RenderPresent(renderer.get());
+}
+
+void Game::processEvent() {
+	SDL_Event event;
+	bool running = true;
+	while (running) {
+		SDL_WaitEvent(&event);
+		if (event.type == SDL_QUIT)
+			running = false;
+	}
 }
