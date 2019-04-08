@@ -18,11 +18,11 @@ INCLUDE :=-I$(EXT_DIR)\SDL2-2.0.7\include \
 	-I$(EXT_DIR)\glew-2.1.0\include \
 	-I$(EXT_DIR)\glm-0.9.5
 
-LIB :=-L$(EXT_DIR)\SDL2-2.0.7\lib\x64 \
-	-L$(EXT_DIR)\SDL2_image-2.0.2\lib\x64 \
-	-L$(EXT_DIR)\SDL2_mixer-2.0.2\lib\x64 \
-	-L$(EXT_DIR)\SDL2_ttf-2.0.14\lib\x64 \
-	-L$(EXT_DIR)\glew-2.1.0\lib\Release\x64
+LIB :=-L$(EXT_DIR)\SDL2-2.0.7\lib\x86 \
+	-L$(EXT_DIR)\SDL2_image-2.0.2\lib\x86 \
+	-L$(EXT_DIR)\SDL2_mixer-2.0.2\lib\x86 \
+	-L$(EXT_DIR)\SDL2_ttf-2.0.14\lib\x86 \
+	-L$(EXT_DIR)\glew-2.1.0\lib\Release\Win32
 
 LIBRAIRIES := -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -llibpng16-16 -lglew32 -lzlib1 -lopengl32
 
