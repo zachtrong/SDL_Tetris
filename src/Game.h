@@ -12,9 +12,6 @@ using namespace std;
 
 class Game {
 private:
-	static const int SCREEN_WIDTH;
-	static const int SCREEN_HEIGHT;
-
 	static shared_ptr<Game> instance;
 	shared_ptr<SDL_Window> window;
 	shared_ptr<SDL_Renderer> renderer;

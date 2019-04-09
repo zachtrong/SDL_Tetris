@@ -2,8 +2,6 @@
 
 using namespace std;
 
-const int Game::SCREEN_WIDTH = 400;
-const int Game::SCREEN_HEIGHT = 700;
 shared_ptr<Game> Game::instance(nullptr);
 
 Game::Game(): 
@@ -60,8 +58,8 @@ void Game::initWindow() {
 			Constants::GAME_TITLE, 
 			SDL_WINDOWPOS_UNDEFINED, 
 			SDL_WINDOWPOS_UNDEFINED, 
-			SCREEN_WIDTH, 
-			SCREEN_HEIGHT, 
+			Constants::SCREEN_WIDTH, 
+			Constants::SCREEN_HEIGHT, 
 			SDL_WINDOW_SHOWN
 		)
 	);
@@ -113,7 +111,12 @@ void Game::drawBackground() {
 
 void Game::drawRedFilledQuad() {
 	//Render red filled quad
-	SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+	SDL_Rect fillRect = { 
+		Constants::SCREEN_WIDTH / 4, 
+		Constants::SCREEN_HEIGHT / 4, 
+		Constants::SCREEN_WIDTH / 2, 
+		Constants::SCREEN_HEIGHT / 2 
+	};
 	SDL_SetRenderDrawColor( renderer.get(), 0xFF, 0x00, 0x00, 0xFF );        
 	SDL_RenderFillRect( renderer.get(), &fillRect );
 	SDL_RenderPresent(renderer.get());
