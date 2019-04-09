@@ -1,15 +1,34 @@
 #include "Board.h"
 
-Board::Board(): state(new int* [Constants::BOARD_WIDTH]) {
-    for (int i = 0; i < Constants::BOARD_WIDTH; ++i) {
-        state[i] = new int[Constants::BOARD_HEIGHT];
+BoxArray::BoxArray()
+    :state(new int[Constants::BOARD_HEIGHT]) {
+    for (int i = 0; i < Constants::BOARD_HEIGHT; ++i) {
+        state[i] = 0;
     }
-};
+}
 
-Board::~Board() {
-    for (int i = 0; i < Constants::BOARD_WIDTH; ++i) {
-        delete[] state[i];
-    }
+BoxArray::~BoxArray() {
     delete[] state;
 }
 
+int& BoxArray::operator[](int x) {
+    return state[x];
+}
+
+Board::Board()
+    :state(new BoxArray[Constants::BOARD_WIDTH]) {
+};
+
+Board::~Board() {
+    delete[] state;
+}
+
+BoxArray& Board::operator[](int x) {
+    return state[x];
+}
+
+void test() {
+    Board b;
+    b[1][2] = 3;
+    cout << b[1][2] << endl;
+}

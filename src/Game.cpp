@@ -117,7 +117,7 @@ void Game::drawRedFilledQuad() {
 		Constants::SCREEN_WIDTH / 2, 
 		Constants::SCREEN_HEIGHT / 2 
 	};
-	SDL_SetRenderDrawColor( renderer.get(), 0xFF, 0x00, 0x00, 0xFF );        
+	SDL_SetRenderDrawColor( renderer.get(), 0xFF, 0x00, 0x00, 0xFF );
 	SDL_RenderFillRect( renderer.get(), &fillRect );
 	SDL_RenderPresent(renderer.get());
 }
