@@ -6,8 +6,12 @@ BUILD_DIR := ..\build
 RELEASE_DIR := ..\release
 RELEASE_OBJ_DIR := ..\release\obj
 
+TEST_BUILD_DIR := ..\build_test
+TEST_OBJ_DIR := ..\build_test\obj
+
 SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
+TEST_OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(TEST_OBJ_DIR)/%.o,$(SRC_FILES))
 RELEASE_OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(RELEASE_OBJ_DIR)/%.o,$(SRC_FILES))
 
 INCLUDE :=-I$(EXT_DIR)\SDL2-2.0.7\include \
@@ -41,3 +45,10 @@ release: $(RELEASE_OBJ_FILES)
 # Each .o file finds his .cpp counterpart, with optimisations
 $(RELEASE_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	g++ -std=c++17 -O3 -Wall -Wextra -c -o $@ $< $(INCLUDE) 
+
+test: $(TEST_OBJ_FILES)
+	g++ -DTEST -g -o $(TEST_BUILD_DIR)\$@ $^ $(LIB) $(LIBRAIRIES)
+
+# Each .o file finds his .cpp counterpart
+$(TEST_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	g++ -DTEST -std=c++17 -g -Wall -Wextra -c -o $@ $< $(INCLUDE) 

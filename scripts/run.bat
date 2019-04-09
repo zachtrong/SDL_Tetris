@@ -1,3 +1,5 @@
+@echo off
+
 set buildDir=%~dp0..\build
 set scriptDir=%~dp0..\scripts
 

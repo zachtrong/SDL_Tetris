@@ -14,3 +14,4 @@
 .release/
 .vs/
 .vscode/
+.build_test/
