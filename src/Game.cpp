@@ -103,18 +103,19 @@ SDL_Texture* Game::loadBackgroundTexture() {
 	return SDL_CreateTextureFromSurface(renderer.get(), loadedSurface.get());
 }
 
-void Game::drawRedFilledQuad() {
-	//Render red filled quad
-	SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-	SDL_SetRenderDrawColor( renderer.get(), 0xFF, 0x00, 0x00, 0xFF );        
-	SDL_RenderFillRect( renderer.get(), &fillRect );
-}
-
 void Game::drawBackground() {
 	SDL_SetRenderDrawColor(renderer.get(), 0xff, 0xff, 0xff, 0xff);
 
 	SDL_RenderClear(renderer.get());
 	SDL_RenderCopy(renderer.get(), texture.get(), NULL, NULL);
+	SDL_RenderPresent(renderer.get());
+}
+
+void Game::drawRedFilledQuad() {
+	//Render red filled quad
+	SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+	SDL_SetRenderDrawColor( renderer.get(), 0xFF, 0x00, 0x00, 0xFF );        
+	SDL_RenderFillRect( renderer.get(), &fillRect );
 	SDL_RenderPresent(renderer.get());
 }
 
