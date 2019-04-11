@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Constants.h"
+#include "Tile.h"
 #pragma once
 
 /*
@@ -9,12 +10,12 @@
 
 class BoxArray {
 private:
-    int *state;
+    Tile *state;
 public:
     BoxArray();
     virtual ~BoxArray();
 
-    int& operator[](int x);
+    Tile& operator[](int x);
 };
 
 class Board {

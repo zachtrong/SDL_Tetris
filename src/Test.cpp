@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-string Test::testName = "";
+string Test::testCase = "";
 
 Test::Test() {
 }
@@ -13,34 +13,47 @@ Test::~Test() {
 
 void Test::assert(bool b) {
     if (!b) {
-        throw testName + " fail";
+        throw failedTestCase();
     }
 }
 
 template <typename T>
 void Test::assertEqual(T a, T b) {
-    if (a != b) {
-        throw testName + " fail";
+    if (!(a == b)) {
+        throw failedTestCase();
     }
 }
 
-void Test::setTestName(string t) {
-    testName = t;
+template <typename T>
+void Test::assertNotEqual(T a, T b) {
+    if (!(a != b)) {
+        throw failedTestCase();
+    }
 }
 
-void Test::finishTest() {
-    printf("%s ok\n", testName.c_str());
+string Test::failedTestCase() {
+    return "\tFAILED: " + testCase;
+}
+
+void Test::setTestCase(string t) {
+    testCase = t;
+}
+
+void Test::finishTestCase() {
+    printf("\tOK: %s\n", testCase.c_str());
+}
+
+void Test::printTestName(string testName) {
+    printf("Start testing: %s\n", testName.c_str());
 }
 
 void Test::runAllTest() {
     try {
-        setTestName("Test Board.cpp");
+        printTestName("Board.cpp");
         Test::runTestBoard();
-        finishTest();
 
-        setTestName("Test Tile.cpp");
+        printTestName("Tile.cpp");
         Test::runTestTile();
-        finishTest();
     } catch (const char *message) {
         printf("%s\n", message);
     }
@@ -48,15 +61,36 @@ void Test::runAllTest() {
 
 void Test::runTestBoard() {
     Board b;
-    b[1][2] = 3;
-    assertEqual(b[1][2], 3);
+
+    setTestCase("default value");
+    assertEqual(b[1][1], Tile());
+    assertEqual(b[1][1], Tile(EMPTY));
+    assertEqual(b[0][1], Tile(EMPTY));
+    assertEqual(b[0][1], Tile());
+    finishTestCase();
+
+    setTestCase("set new value");
+    b[1][2] = Tile(T);
+    assertEqual(b[1][2], Tile(T));
+    b[1][2] = Tile();
+    assertEqual(b[1][2], Tile());
+    finishTestCase();
 }
 
 void Test::runTestTile() {
-    Tile *tile = new Tile(I);
+    shared_ptr<Tile> tile;
+
+    setTestCase("arbitrary value");
+    tile = make_shared<Tile>(I);
     assertEqual(tile->getAssetPath(), string("assets/textures/1x/tile_Imdpi.png"));
-    delete tile;
-    tile = new Tile(J);
+    tile = make_shared<Tile>(J);
     assertEqual(tile->getAssetPath(), string("assets/textures/1x/tile_Jmdpi.png"));
-    delete tile;
+    finishTestCase();
+
+    setTestCase("default value");
+    tile = make_shared<Tile>();
+    assertEqual(tile->getAssetPath(), string(""));
+    tile = make_shared<Tile>(EMPTY);
+    assertEqual(tile->getAssetPath(), string(""));
+    finishTestCase();
 }
