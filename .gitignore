@@ -10,8 +10,8 @@
 *.app
 
 # Builds
-./build/
-./release/
 ./vs/
 .vscode/
 build_test/
+build/
+release/

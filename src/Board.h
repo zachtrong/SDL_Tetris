@@ -1,7 +1,6 @@
-#include "Game.h"
+#pragma once
 #include "Constants.h"
 #include "Tile.h"
-#pragma once
 
 /*
     class Board represent the color and state of Tetris game
