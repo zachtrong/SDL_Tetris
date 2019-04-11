@@ -35,5 +35,6 @@ public:
 	void initTexture();
 
 	shared_ptr<SDL_Texture> createTexture(string path);
+	shared_ptr<SDL_Surface> createSurface(string path);
     void updateBoard(Board &board);
 };

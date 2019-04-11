@@ -93,10 +93,7 @@ void GameView::initTexture() {
 }
 
 shared_ptr<SDL_Texture> GameView::createTexture(string path) {
-	shared_ptr<SDL_Surface> loadedRawSurface(IMG_Load(path.c_str()));
-	shared_ptr<SDL_Surface> loadedSurface(
-		SDL_ConvertSurface(loadedRawSurface.get(), windowSurface->format, 0)
-	);
+	shared_ptr<SDL_Surface> loadedSurface = createSurface(path);
 	if (loadedSurface == nullptr) {
 		throw new Exception(IMG_GetError());
 	}
@@ -106,6 +103,14 @@ shared_ptr<SDL_Texture> GameView::createTexture(string path) {
 	);
 	SDL_SetTextureBlendMode(res.get(), SDL_BLENDMODE_BLEND);
 	return res;
+}
+
+shared_ptr<SDL_Surface> GameView::createSurface(string path) {
+	shared_ptr<SDL_Surface> loadedRawSurface(IMG_Load(path.c_str()));
+	shared_ptr<SDL_Surface> loadedSurface(
+		SDL_ConvertSurface(loadedRawSurface.get(), windowSurface->format, 0)
+	);
+	return loadedSurface;
 }
 
 void GameView::drawBackground() {
