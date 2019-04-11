@@ -122,11 +122,21 @@ void GameView::drawBackground() {
 void GameView::updateBoard(Board &board) {
     for (int i = 0; i < Constants::BOARD_WIDTH; ++i) {
         for (int j = 0; j < Constants::BOARD_HEIGHT; ++j) {
-			Tile *t = &board[i][j];
-			auto tileTexture = createTexture(t->getAssetPath());
-			SDL_Rect &rect = t->getPositionOnWindow();
-			SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
+			copyTileToRenderer(&board[i][j]);
         }
     }
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::copyTileToRenderer(Tile *t) {
+	auto tileTexture = createTexture(t->getAssetPath());
+	SDL_Rect &rect = t->getPositionOnWindow();
+	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
+}
+
+void GameView::updateBoardChangedPositions(Board &board, vector<SDL_Point> &positions) {
+	for (SDL_Point p : positions) {
+		copyTileToRenderer(&board[p.x][p.y]);
+	}
 	SDL_RenderPresent(renderer.get());
 }

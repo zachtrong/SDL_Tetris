@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include <memory>
 #include <exception>
+#include <vector>
 #include "Exception.h"
 #include "Constants.h"
 #include "PointerDefinition.h"
@@ -37,4 +38,6 @@ public:
 	shared_ptr<SDL_Texture> createTexture(string path);
 	shared_ptr<SDL_Surface> createSurface(string path);
     void updateBoard(Board &board);
+	void copyTileToRenderer(Tile *t);
+    void updateBoardChangedPositions(Board &board, vector<SDL_Point> &positions);
 };
