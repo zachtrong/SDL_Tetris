@@ -21,14 +21,6 @@ GameView::~GameView() {
 	SDL_Quit();
 }
 
-void GameView::updateBoard(const Board &board) {
-    for (int i = 0; i < Constants::BOARD_WIDTH; ++i) {
-        for (int j = 0; j < Constants::BOARD_HEIGHT; ++j) {
-
-        }
-    }
-}
-
 void GameView::startSDL() {
 	try {
 		init();
@@ -43,7 +35,6 @@ void GameView::startSDL() {
 	printf("initialization successful!\n");
 	
 	drawBackground();
-	drawRedFilledQuad();
 }
 
 void GameView::init() {
@@ -71,6 +62,9 @@ void GameView::initWindow() {
 	if (window == nullptr) {
 		throw new Exception(SDL_GetError());
 	}
+	windowSurface = PointerDefinition::createSdlSurface(
+		SDL_GetWindowSurface(window.get())
+	);
 }
 
 void GameView::initRenderer() {
@@ -80,6 +74,8 @@ void GameView::initRenderer() {
 	if (renderer == nullptr) {
 		throw new Exception(SDL_GetError());
 	}
+	SDL_SetRenderDrawBlendMode(renderer.get(), SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 0);
 }
 
 void GameView::initImage() {
@@ -90,39 +86,42 @@ void GameView::initImage() {
 }
 
 void GameView::initTexture() {
-	texture = PointerDefinition::createSdlTexture(
-		loadBackgroundTexture()
-	);
+	texture = createTexture(Constants::BACKGROUND_IMG_PATH);
 	if (texture == nullptr) {
 		throw new Exception(SDL_GetError());
 	}
 }
 
-SDL_Texture* GameView::loadBackgroundTexture() {
-	shared_ptr<SDL_Surface> loadedSurface(IMG_Load("assets/textures/background.png"));
+shared_ptr<SDL_Texture> GameView::createTexture(string path) {
+	shared_ptr<SDL_Surface> loadedRawSurface(IMG_Load(path.c_str()));
+	shared_ptr<SDL_Surface> loadedSurface(
+		SDL_ConvertSurface(loadedRawSurface.get(), windowSurface->format, 0)
+	);
 	if (loadedSurface == nullptr) {
 		throw new Exception(IMG_GetError());
 	}
-	return SDL_CreateTextureFromSurface(renderer.get(), loadedSurface.get());
+	SDL_SetColorKey(loadedSurface.get(), SDL_TRUE, SDL_MapRGBA(loadedSurface->format, 0xff, 0xff, 0xff, 0x00));
+	shared_ptr<SDL_Texture> res = PointerDefinition::createSdlTexture(
+		SDL_CreateTextureFromSurface(renderer.get(), loadedSurface.get())
+	);
+	SDL_SetTextureBlendMode(res.get(), SDL_BLENDMODE_BLEND);
+	return res;
 }
 
 void GameView::drawBackground() {
-	SDL_SetRenderDrawColor(renderer.get(), 0xff, 0xff, 0xff, 0xff);
-
 	SDL_RenderClear(renderer.get());
-	SDL_RenderCopy(renderer.get(), texture.get(), NULL, NULL);
+	SDL_RenderCopy(renderer.get(), texture.get(), nullptr, nullptr);
 	SDL_RenderPresent(renderer.get());
 }
 
-void GameView::drawRedFilledQuad() {
-	//Render red filled quad
-	SDL_Rect fillRect = { 
-		Constants::SCREEN_WIDTH / 4, 
-		Constants::SCREEN_HEIGHT / 4, 
-		Constants::SCREEN_WIDTH / 2, 
-		Constants::SCREEN_HEIGHT / 2 
-	};
-	SDL_SetRenderDrawColor( renderer.get(), 0xFF, 0x00, 0x00, 0xFF );
-	SDL_RenderFillRect( renderer.get(), &fillRect );
+void GameView::updateBoard(Board &board) {
+    for (int i = 0; i < Constants::BOARD_WIDTH; ++i) {
+        for (int j = 0; j < Constants::BOARD_HEIGHT; ++j) {
+			Tile *t = &board[i][j];
+			auto tileTexture = createTexture(t->getAssetPath());
+			SDL_Rect &rect = t->getPositionOnWindow();
+			SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
+        }
+    }
 	SDL_RenderPresent(renderer.get());
 }

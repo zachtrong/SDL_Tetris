@@ -89,8 +89,8 @@ void Test::runTestTile() {
 
     setTestCase("default value");
     tile = make_shared<Tile>();
-    assertEqual(tile->getAssetPath(), string(""));
+    assertEqual(tile->getAssetPath(), string("assets/textures/1x/tile_EMPTYmdpi.png"));
     tile = make_shared<Tile>(EMPTY);
-    assertEqual(tile->getAssetPath(), string(""));
+    assertEqual(tile->getAssetPath(), string("assets/textures/1x/tile_EMPTYmdpi.png"));
     finishTestCase();
 }

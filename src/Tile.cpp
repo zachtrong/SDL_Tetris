@@ -11,13 +11,29 @@ Tile::~Tile() {
 
 }
 
-string Tile::getAssetPath() {
+string Tile::getAssetPath() const {
     if (type == EMPTY) {
-        return "";
+        return FILE_PREFIX + "EMPTY" + FILE_SUFFIX;
     }
-    return FILE_PREFIX + char(type) + FILE_SUFFIX;
+    char c = type;
+    return FILE_PREFIX + c + FILE_SUFFIX;
 }
 
 TileType Tile::getType() const {
     return type;
+}
+
+void Tile::setPositionOnWindow(int x, int y, int w, int h) {
+    positionOnWindow.x = x;
+    positionOnWindow.y = y;
+    positionOnWindow.w = w;
+    positionOnWindow.h = h;
+}
+
+SDL_Rect& Tile::getPositionOnWindow() {
+    return positionOnWindow;
+}
+
+void Tile::setType(TileType type) {
+    this->type = type;
 }
