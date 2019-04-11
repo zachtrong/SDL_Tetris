@@ -34,16 +34,16 @@ void Test::finishTest() {
 
 void Test::runAllTest() {
     try {
+        setTestName("test board");
         Test::runTestBoard();
+        finishTest();
     } catch (const char *message) {
         printf("%s\n", message);
     }
 }
 
 void Test::runTestBoard() {
-    setTestName("test board");
     Board b;
     b[1][2] = 3;
     assertEqual(b[1][2], 3);
-    finishTest();
 }
