@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Board.h"
+#include "Tile.h"
 #include <string>
 #pragma once
 
@@ -19,4 +20,5 @@ public:
     static void runAllTest();
 
     static void runTestBoard();
+    static void runTestTile();
 };

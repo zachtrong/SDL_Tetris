@@ -10,9 +10,9 @@ using namespace std;
 class GameView {
 private:
     static shared_ptr<GameView> instance;
-    GameView();
 public:
     static shared_ptr<GameView> getInstance();
+    GameView();
     virtual ~GameView();
     void updateBoard(const Board &board);
 };
