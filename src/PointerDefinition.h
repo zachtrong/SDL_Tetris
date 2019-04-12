@@ -1,7 +1,7 @@
+#pragma once
 #include <memory>
 #include <SDL.h>
 
-#pragma once
 using namespace std;
 
 class PointerDefinition {

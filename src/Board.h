@@ -1,6 +1,6 @@
-#include "Game.h"
-#include "Constants.h"
 #pragma once
+#include "Constants.h"
+#include "Tile.h"
 
 /*
     class Board represent the color and state of Tetris game
@@ -9,12 +9,12 @@
 
 class BoxArray {
 private:
-    int *state;
+    Tile *state;
 public:
     BoxArray();
     virtual ~BoxArray();
 
-    int& operator[](int x);
+    Tile& operator[](int x);
 };
 
 class Board {
