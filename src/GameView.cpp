@@ -35,6 +35,20 @@ void GameView::startSDL() {
 	printf("initialization successful!\n");
 	
 	drawBackground();
+
+
+	Board b;
+
+	b[0][0].setType(O);
+	b[0][1].setType(L);
+	b[0][2].setType(J);
+	b[1][0].setType(S);
+	b[1][1].setType(L);
+	b[1][2].setType(T);
+	b[2][0].setType(O);
+	b[2][1].setType(J);
+
+	updateBoard(b);
 }
 
 void GameView::init() {
@@ -120,8 +134,8 @@ void GameView::drawBackground() {
 }
 
 void GameView::updateBoard(Board &board) {
-    for (int i = 0; i < Constants::BOARD_WIDTH; ++i) {
-        for (int j = 0; j < Constants::BOARD_HEIGHT; ++j) {
+    for (int i = 0; i < Constants::BOARD_HEIGHT; ++i) {
+        for (int j = 0; j < Constants::BOARD_WIDTH; ++j) {
 			copyTileToRenderer(&board[i][j]);
         }
     }
