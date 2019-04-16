@@ -1,7 +1,7 @@
 #include "Tile.h"
 
-const string Tile::FILE_PREFIX = "assets/textures/1x/tile_";
-const string Tile::FILE_SUFFIX = "mdpi.png";
+const string Tile::FILE_PREFIX = "assets/textures/2x/tile_";
+const string Tile::FILE_SUFFIX = "xhdpi.png";
 
 Tile::Tile(TileType type) {
     this->type = type;
