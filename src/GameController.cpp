@@ -1,11 +1,21 @@
 #include "GameController.h"
+#include "Constants.h"
+#include "Tile.h"
+#include <iostream>
+#include <random>
+#include <vector>
+#include <ctime>
+using namespace std;
 
 GameController::GameController() {
 }
 
-void GameController::genNewTile() {
-    int randNum = rand() % 7;
+// ============ Main functions ============
+void GameController::genCurrentTile() {
+    mt19937 rng(time(0));
+    int randNum = rng() % 7;
     currentTile = Tile(Constants::MAP_TILE_TYPE[randNum]);
+    direction = 0;
     assignCurrentTilePosition();
 }
 
@@ -25,7 +35,7 @@ void GameController::collapse() {
     }
 }
 
-// utils
+// ============ Helper functions ============
 vector<int> GameController::getFullTileHeightDescending() {
     vector<int> res;
     for (int height = Constants::BOARD_HEIGHT - 1; height >= 0; --height) {

@@ -13,13 +13,14 @@ private:
 public:
     Board board;
     Tile currentTile;
+    int direction; // {0, 1, 2, 3}
 
     GameController();
     
     void collapse();
     vector<int> getFullTileHeightDescending();
 
-    void genNewTile();
+    void genCurrentTile();
     void assignCurrentTilePosition();
 
     void softDrop();
