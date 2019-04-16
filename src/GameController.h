@@ -2,24 +2,28 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
+#include <vector>
+#include "Constants.h"
+#include "Board.h"
 using namespace std;
 
 class GameController {
 private:
-    static const int *shape;
 
 public:
-    static const int WIDTH = 10;
-    static const int HEIGHT = 40;
-    
-    int color[WIDTH][HEIGHT];
+    Board board;
+    Tile currentTile;
 
     GameController();
     
     void collapse();
+    vector<int> getFullTileHeightDescending();
+
+    void genNewTile();
+    void assignCurrentTilePosition();
+
     void softDrop();
     void hardDrop();
-    void newTetris();
     void moveLeft();
     void moveRight();
     void rotateLeft();

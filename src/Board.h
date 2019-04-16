@@ -4,7 +4,7 @@
 
 /*
     class Board represent the color and state of Tetris game
-    usage: board[width][height]
+    usage: board[height][width]
 */
 
 class BoxArray {

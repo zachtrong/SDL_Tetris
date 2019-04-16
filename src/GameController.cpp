@@ -1,30 +1,49 @@
 #include "GameController.h"
 
 GameController::GameController() {
-    memset(color, 0, sizeof color);
+}
+
+void GameController::genNewTile() {
+    int randNum = rand() % 7;
+    currentTile = Tile(Constants::MAP_TILE_TYPE[randNum]);
+    assignCurrentTilePosition();
 }
 
 void GameController::collapse() {
-    while(true) {
-        // check if the last row contains all colored cells
-        bool allColored = true;
-        for (int col = 0; col < WIDTH; ++col) {
-            if (color[HEIGHT-1][col] == 0) {
-                allColored = false;
+    vector<int> fullTileHeightDescending = getFullTileHeightDescending();
+
+    int numDeleted = 0;
+    int ptr = 0;
+    for (int height = Constants::BOARD_HEIGHT - 1; height >= 0; --height) {
+        if (ptr < fullTileHeightDescending.size() && fullTileHeightDescending[ptr] == height) {
+            ++numDeleted;
+            continue;
+        }
+        for (int width = 0; width < Constants::BOARD_WIDTH; ++width) {
+            board[height][width] = board[height - numDeleted][width];
+        }
+    }
+}
+
+// utils
+vector<int> GameController::getFullTileHeightDescending() {
+    vector<int> res;
+    for (int height = Constants::BOARD_HEIGHT - 1; height >= 0; --height) {
+        bool hasEmpty = false;
+        for (int width = 0; width < Constants::BOARD_WIDTH; ++width) {
+            if (board[height][width].getType() == EMPTY) {
+                hasEmpty = true;
                 break;
             }
         }
-        if (!allColored) {
-            break;
-        }
-        // destroy the last row
-        for (int row = HEIGHT-1; row >= 1; --row) {
-            for (int col = 0; col < WIDTH; ++col) {
-                color[row][col] = color[row - 1][col];
-            }
-        }
-        for (int col = 0; col < WIDTH; ++col) {
-            color[0][col] = 0; // uncolored
+
+        if (!hasEmpty) {
+            res.push_back(height);
         }
     }
+    return res;
+}
+
+void GameController::assignCurrentTilePosition() {
+    
 }
