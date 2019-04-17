@@ -104,7 +104,7 @@ void GameController::assignCurrentTilePosition() {
     
 }
 
-int getTileID(TileType &tileType) {
+int GameController::getTileID(TileType tileType) {
     // Returns index of TileType c in MAP_TILE_TYPE
     for (int i = 0; i < (int) Constants::MAP_TILE_TYPE.size(); ++i) {
         if (tileType == Constants::MAP_TILE_TYPE[i]) return i;

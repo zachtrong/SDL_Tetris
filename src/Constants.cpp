@@ -15,7 +15,7 @@ const int Constants::BOARD_HEIGHT = SCREEN_HEIGHT / TILE_SIZE;
 
 const vector<TileType> Constants::MAP_TILE_TYPE = {I, J, L, O, S, T, Z}; 
 
-const vector< pair<int,int> > TILE_POSITIONS[7][4] = {
+const vector< pair<int,int> > Constants::TILE_POSITIONS[7][4] = {
     {
         { make_pair(1,0), make_pair(1,1), make_pair(1,2), make_pair(1,3) }, // (I, 0)
         { make_pair(0,2), make_pair(1,2), make_pair(2,2), make_pair(3,2) }, // (I, 1)

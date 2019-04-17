@@ -32,7 +32,7 @@ public:
     void rotateRight();
 
     // Helper functions
-    int getTileID();
+    int getTileID(TileType tileType);
     void assignCurrentTilePosition();
     vector<int> getFullTileHeightDescending();
     bool positionInsideBoard(int height, int width);
