@@ -6,7 +6,6 @@ using namespace std;
 /*
     Reference:
     https://tetris.fandom.com/wiki/Tetromino
-    tile X equal NULL
 */
 
 enum TileType {
@@ -30,11 +29,18 @@ public:
     Tile(TileType type = EMPTY);
     string getAssetPath() const;
     TileType getType() const;
-    void setType(TileType type);
     virtual ~Tile();
 
     void setPositionOnWindow(int x, int y, int w, int h);
     SDL_Rect& getPositionOnWindow();
+
+    Tile& operator=(const Tile& other) {
+        if (&other == this) {
+            return *this;
+        }
+        this->type = other.type;
+        return *this;
+    }
 
     friend bool operator==(const Tile &lhs, const Tile &rhs) {
         return lhs.getType() == rhs.getType();

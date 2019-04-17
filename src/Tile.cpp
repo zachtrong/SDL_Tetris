@@ -33,7 +33,3 @@ void Tile::setPositionOnWindow(int x, int y, int w, int h) {
 SDL_Rect& Tile::getPositionOnWindow() {
     return positionOnWindow;
 }
-
-void Tile::setType(TileType type) {
-    this->type = type;
-}

@@ -1,4 +1,5 @@
 #include "GameView.h"
+#include <iostream>
 
 shared_ptr<GameView> GameView::instance(nullptr);
 
@@ -39,14 +40,15 @@ void GameView::startSDL() {
 
 	Board b;
 
-	b[0][0].setType(O);
-	b[0][1].setType(L);
-	b[0][2].setType(J);
-	b[1][0].setType(S);
-	b[1][1].setType(L);
-	b[1][2].setType(T);
-	b[2][0].setType(O);
-	b[2][1].setType(J);
+	//b[0][0].setType(O);
+	b[0][0] = Tile(O);
+	b[0][1] = Tile(L);
+	b[0][2] = Tile(J);
+	b[1][0] = Tile(S);
+	b[1][1] = Tile(L);
+	b[1][2] = Tile(T);
+	b[2][0] = Tile(O);
+	b[2][1] = Tile(J);
 
 	updateBoard(b);
 }
