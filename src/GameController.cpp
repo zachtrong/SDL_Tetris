@@ -20,9 +20,10 @@ void GameController::genCurrentTile() {
     int randNum = rng() % 7;
     currentTile = Tile(Constants::MAP_TILE_TYPE[randNum]);
     direction = 0;
-    assignCurrentTilePosition();
+    assignCurrentTile();
 }
 
+// DROP FUNCTIONS
 bool GameController::canDrop() {
     // Returns true if we can perform a single drop
     //         false otherwise
@@ -56,6 +57,37 @@ void GameController::hardDrop() {
     }
 }
 
+// MOVE FUNCTIONS
+void GameController::moveLeft() {
+    deleteCurrentTileFromBoard();
+    topLeftWidth--;
+    bool can = validateCurrentTile();
+    if (!can) {
+        topLeftWidth++;
+    }
+    addCurrentTileToBoard();
+}
+
+void GameController::moveRight() {
+    deleteCurrentTileFromBoard();
+    topLeftWidth++;
+    bool can = validateCurrentTile();
+    if (!can) {
+        topLeftWidth--;
+    }
+    addCurrentTileToBoard();
+}
+
+// ROTATE FUNCTIONS (WITH WALL KICKS)
+void GameController::rotateLeft() {
+    direction = (direction + 3) % 4;
+}
+
+void GameController::rotateRight() {
+    direction = (direction + 1) % 4;
+}
+
+// COLLAPSE FUNCTION
 void GameController::collapse() {
     vector<int> fullTileHeightDescending = getFullTileHeightDescending();
 
@@ -100,8 +132,9 @@ vector<int> GameController::getFullTileHeightDescending() {
     return res;
 }
 
-void GameController::assignCurrentTilePosition() {
-    
+void GameController::assignCurrentTile() {
+    topLeftHeight = 18;
+    topLeftWidth = 3;
 }
 
 int GameController::getTileID(TileType tileType) {
@@ -116,46 +149,55 @@ bool GameController::positionInsideBoard(int height, int width) {
     return height >= 0 && height < Constants::BOARD_HEIGHT && width >= 0 && width < Constants::BOARD_WIDTH;
 }
 
-void GameController::deleteCurrentTileFromBoard() {
+vector < pair<int,int> > GameController::getCurrentTilePositions() {
     int tileID = getTileID(currentTile.getType());
+    vector < pair<int,int> > res;
     for (int i = 0; i < 4; ++i) {
-        int curHeight = topLeftHeight + Constants::TILE_POSITIONS[tileID][direction][i].first;
-        int curWidth = topLeftWidth + Constants::TILE_POSITIONS[tileID][direction][i].second;
-        if (!positionInsideBoard(curHeight, curWidth)) {
+        int height = topLeftHeight + Constants::TILE_POSITIONS[tileID][direction][i].first;
+        int width = topLeftWidth + Constants::TILE_POSITIONS[tileID][direction][i].second;
+        res.push_back(make_pair(height, width));
+    }
+    return res;
+}
+
+void GameController::deleteCurrentTileFromBoard() {
+    vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
+    for (auto &position : currentTilePositions) {
+        int height = position.first, width = position.second;
+        if (!positionInsideBoard(height, width)) {
             assert(0 && "deleteCurrentTileFromBoard: position is not inside the board!\n");
         }
-        board[curHeight][curWidth] = Tile(EMPTY);
+        board[height][width] = Tile(EMPTY);
     }
 }
 
 void GameController::addCurrentTileToBoard() {
     TileType currentTileType = currentTile.getType();
-    int tileID = getTileID(currentTileType);
-    for (int i = 0; i < 4; ++i) {
-        int curHeight = topLeftHeight + Constants::TILE_POSITIONS[tileID][direction][i].first;
-        int curWidth = topLeftWidth + Constants::TILE_POSITIONS[tileID][direction][i].second;
-        if (!positionInsideBoard(curHeight, curWidth)) {
+    vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
+    for (auto &position : currentTilePositions) {
+        int height = position.first, width = position.second;
+        if (!positionInsideBoard(height, width)) {
             assert(0 && "addCurrentTileToBoard: position is not inside the board!\n");
         }
-        if (board[curHeight][curWidth].getType() != EMPTY) {
-            assert(0 && "addCurrentTileToBoard: cell is not empty to fill");
+        if (board[height][width].getType() != EMPTY) {
+            assert(0 && "addCurrentTileToBoard: cell is not empty to fill.\n");
         }
-        board[curHeight][curWidth] = Tile(currentTileType);
+        board[height][width] = Tile(currentTileType);
     }
 }
 
 bool GameController::validateCurrentTile() {
     // validateCurrentTile() checks if it is possible to put the current tile in this position
-    // Returns true if all cells in currentTile is empty
+    // either because one of the cells is not empty or because one of the tile positions is out of board
+    // Returns true if possible
     //         false otherwise
-    int tileID = getTileID(currentTile.getType());
-    for (int i = 0; i < 4; ++i) {
-        int curHeight = topLeftHeight + Constants::TILE_POSITIONS[tileID][direction][i].first;
-        int curWidth = topLeftWidth + Constants::TILE_POSITIONS[tileID][direction][i].second;
-        if (!positionInsideBoard(curHeight, curWidth)) {
-            assert(0 && "validateCurrentTile: position is not inside the board!\n");
+    vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
+    for (auto &position : currentTilePositions) {
+        int height = position.first, width = position.second;
+        if (!positionInsideBoard(height, width)) {
+            return false; // out of board (do not assert!)
         }
-        if (board[curHeight][curWidth].getType() != EMPTY) {
+        if (board[height][width].getType() != EMPTY) {
             return false; // not empty
         }
     }

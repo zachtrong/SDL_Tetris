@@ -33,9 +33,10 @@ public:
 
     // Helper functions
     int getTileID(TileType tileType);
-    void assignCurrentTilePosition();
+    void assignCurrentTile();
     vector<int> getFullTileHeightDescending();
     bool positionInsideBoard(int height, int width);
+    vector< pair<int,int> > getCurrentTilePositions();
     void deleteCurrentTileFromBoard();
     void addCurrentTileToBoard();
     bool validateCurrentTile();
