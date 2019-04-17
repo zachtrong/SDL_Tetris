@@ -14,19 +14,29 @@ public:
     Board board;
     Tile currentTile;
     int direction; // {0, 1, 2, 3}
+    int topLeftHeight;
+    int topLeftWidth;
 
     GameController();
     
+    // Main functions
     void collapse();
-    vector<int> getFullTileHeightDescending();
-
     void genCurrentTile();
-    void assignCurrentTilePosition();
-
+    bool canDrop();
+    void singleDrop();
     void softDrop();
     void hardDrop();
     void moveLeft();
     void moveRight();
     void rotateLeft();
     void rotateRight();
+
+    // Helper functions
+    int getTileID();
+    void assignCurrentTilePosition();
+    vector<int> getFullTileHeightDescending();
+    bool positionInsideBoard(int height, int width);
+    void deleteCurrentTileFromBoard();
+    void addCurrentTileToBoard();
+    bool validateCurrentTile();
 };
