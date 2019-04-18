@@ -8,6 +8,77 @@
 #include <cassert>
 using namespace std;
 
+const vector< pair<int,int> > GameController::TILE_POSITIONS[7][4] = {
+    {
+        { {1,0}, {1,1}, {1,2}, {1,3} }, // (I, 0)
+        { {0,2}, {1,2}, {2,2}, {3,2} }, // (I, 1)
+        { {2,3}, {2,2}, {2,1}, {2,0} }, // (I, 2)
+        { {3,1}, {2,1}, {1,1}, {0,1} }, // (I, 3)
+    },
+    {
+        { {0,0}, {1,0}, {1,1}, {1,2} }, // (J, 0)
+        { {0,2}, {0,1}, {1,1}, {2,1} }, // (J, 1)
+        { {2,2}, {1,2}, {1,1}, {1,0} }, // (J, 2)
+        { {2,0}, {2,1}, {1,1}, {0,1} }, // (J, 3)
+    },
+    {
+        { {0,2}, {1,2}, {1,1}, {1,0} }, // (L, 0)
+        { {2,2}, {2,1}, {1,1}, {0,1} }, // (L, 1)
+        { {2,0}, {1,0}, {1,1}, {1,2} }, // (L, 2)
+        { {0,0}, {0,1}, {1,1}, {2,1} }, // (L, 3)
+    },
+    {
+        { {0,1}, {0,2}, {1,1}, {1,2} }, // (O, 0)
+        { {0,1}, {0,2}, {1,1}, {1,2} }, // (O, 1)
+        { {0,1}, {0,2}, {1,1}, {1,2} }, // (O, 2)
+        { {0,1}, {0,2}, {1,1}, {1,2} }, // (O, 3)
+    },
+    {
+        { {0,2}, {0,1}, {1,1}, {1,0} }, // (S, 0)
+        { {2,2}, {1,2}, {1,1}, {0,1} }, // (S, 1)
+        { {2,0}, {2,1}, {1,1}, {1,2} }, // (S, 2)
+        { {0,0}, {1,0}, {1,1}, {2,1} }, // (S, 3)
+    },
+    {
+        { {0,1}, {1,0}, {1,1}, {1,2} }, // (T, 0)
+        { {1,2}, {0,1}, {1,1}, {2,1} }, // (T, 1)
+        { {2,1}, {1,2}, {1,1}, {1,0} }, // (T, 2)
+        { {1,0}, {2,1}, {1,1}, {0,1} }, // (T, 3)
+    },
+    {
+        { {0,0}, {0,1}, {1,1}, {1,2} }, // (Z, 0)
+        { {0,2}, {1,2}, {1,1}, {2,1} }, // (Z, 1)
+        { {2,2}, {2,1}, {1,1}, {1,0} }, // (Z, 2)
+        { {2,0}, {1,0}, {1,1}, {0,1} }, // (Z, 3)
+    }
+};
+
+const vector< pair<int,int> > GameController::MAP_ROTATION_TYPE = {
+    {0, 1}, {1, 0}, {1, 2}, {2, 1}, {2, 3}, {3, 2}, {3, 0}, {0, 3}
+};
+
+const vector< pair<int,int> > GameController::JLSTZ_WALL_KICK_TESTS[8] = {
+	{ { 0, 0},	{-1, 0},	{-1, 1},	{ 0,-2},	{-1,-2} },
+	{ { 0, 0},	{ 1, 0},	{ 1,-1},	{ 0, 2},	{ 1, 2} },
+	{ { 0, 0},	{ 1, 0},	{ 1,-1},	{ 0, 2},	{ 1, 2} },
+	{ { 0, 0},	{-1, 0},	{-1, 1},	{ 0,-2},	{-1,-2} },
+	{ { 0, 0},	{ 1, 0},	{ 1, 1},	{ 0,-2},	{ 1,-2} },
+	{ { 0, 0},	{-1, 0},	{-1,-1},	{ 0, 2},	{-1, 2} },
+	{ { 0, 0},	{-1, 0},	{-1,-1},	{ 0, 2},	{-1, 2} },
+	{ { 0, 0},	{ 1, 0},	{ 1, 1},	{ 0,-2},	{ 1,-2} }
+};
+
+const vector< pair<int,int> > GameController::I_WALL_KICK_TESTS[8] = {
+    { { 0, 0},	{-2, 0},	{ 1, 0},	{-2,-1},	{ 1, 2} },
+	{ { 0, 0},	{ 2, 0},	{-1, 0},	{ 2, 1},	{-1,-2} },
+	{ { 0, 0},	{-1, 0},	{ 2, 0},	{-1, 2},	{ 2,-1} },
+	{ { 0, 0},	{ 1, 0},	{-2, 0},	{ 1,-2},	{-2, 1} },
+	{ { 0, 0},	{ 2, 0},	{-1, 0},	{ 2, 1},	{-1,-2} },
+	{ { 0, 0},	{-2, 0},	{ 1, 0},	{-2,-1},	{ 1, 2} },
+	{ { 0, 0},	{ 1, 0},	{-2, 0},	{ 1,-2},	{-2, 1} },
+	{ { 0, 0},	{-1, 0},	{ 2, 0},	{-1, 2},	{ 2,-1} }
+};
+
 GameController::GameController() {
 }
 
@@ -78,13 +149,35 @@ void GameController::moveRight() {
     addCurrentTileToBoard();
 }
 
-// ROTATE FUNCTIONS (WITH WALL KICKS)
+// ROTATE FUNCTIONS (WITH WALL KICK)
 void GameController::rotateLeft() {
-    direction = (direction + 3) % 4;
+    TileType currentTileType = currentTile.getType();
+    if (currentTileType == O) {
+        return; // rotations are not applied to O-tile
+    }
+    int newDirection = (direction + 3) % 4;
+    int rotationID = getRotationID(direction, newDirection);
+
+    direction = newDirection;
+    if (!wallKick(currentTileType == I ? I_WALL_KICK_TESTS[rotationID] : JLSTZ_WALL_KICK_TESTS[rotationID])) {
+        // wallKick failed!
+        direction = (direction + 1) % 4; // undo the rotation
+    }
 }
 
 void GameController::rotateRight() {
-    direction = (direction + 1) % 4;
+    TileType currentTileType = currentTile.getType();
+    if (currentTileType == O) {
+        return; // rotations are not applied to O-tile
+    }
+    int newDirection = (direction + 1) % 4;
+    int rotationID = getRotationID(direction, newDirection);
+
+    direction = newDirection;
+    if (!wallKick(currentTileType == I ? I_WALL_KICK_TESTS[rotationID] : JLSTZ_WALL_KICK_TESTS[rotationID])) {
+        // wallKick failed!
+        direction = (direction + 3) % 4; // undo the rotation
+    }
 }
 
 // COLLAPSE FUNCTION
@@ -153,19 +246,23 @@ vector < pair<int,int> > GameController::getCurrentTilePositions() {
     int tileID = getTileID(currentTile.getType());
     vector < pair<int,int> > res;
     for (int i = 0; i < 4; ++i) {
-        int height = topLeftHeight + Constants::TILE_POSITIONS[tileID][direction][i].first;
-        int width = topLeftWidth + Constants::TILE_POSITIONS[tileID][direction][i].second;
-        res.push_back(make_pair(height, width));
+        int height = topLeftHeight + TILE_POSITIONS[tileID][direction][i].first;
+        int width = topLeftWidth + TILE_POSITIONS[tileID][direction][i].second;
+        res.push_back({height, width});
     }
     return res;
 }
 
 void GameController::deleteCurrentTileFromBoard() {
+    TileType currentTileType = currentTile.getType();
     vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
     for (auto &position : currentTilePositions) {
         int height = position.first, width = position.second;
         if (!positionInsideBoard(height, width)) {
             assert(0 && "deleteCurrentTileFromBoard: position is not inside the board!\n");
+        }
+        if (board[height][width].getType() != currentTileType) {
+            assert(0 && "deleteCurrentTileFromBoard: conflict TileType.\n");
         }
         board[height][width] = Tile(EMPTY);
     }
@@ -188,7 +285,7 @@ void GameController::addCurrentTileToBoard() {
 
 bool GameController::validateCurrentTile() {
     // validateCurrentTile() checks if it is possible to put the current tile in this position
-    // either because one of the cells is not empty or because one of the tile positions is out of board
+    // because one of the tile positions is not empty or out of board
     // Returns true if possible
     //         false otherwise
     vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
@@ -202,4 +299,29 @@ bool GameController::validateCurrentTile() {
         }
     }
     return true;
+}
+
+int GameController::getRotationID(int beforeDirection, int afterDirection) {
+    for (int i = 0; i < (int) MAP_ROTATION_TYPE.size(); ++i) {
+        if (MAP_ROTATION_TYPE[i] == make_pair(beforeDirection, afterDirection)) {
+            return i;
+        }
+    }
+    assert(0 && "getRotationID: failed!\n");
+}
+
+bool GameController::wallKick(vector < pair<int,int> > tests) {
+    // Returns false if all the tests fail
+    //         true if one of the tests works, and change the topLeftHeight and topLeftWidth as well
+    for (auto test: tests) {
+        topLeftHeight += test.first;
+        topLeftWidth += test.second;
+        if (!validateCurrentTile()) {
+            // undo the test
+            topLeftHeight -= test.first;
+            topLeftWidth -= test.second;
+        }
+        return true;
+    }
+    return false;
 }
