@@ -7,11 +7,11 @@ Constants::~Constants() {
 
 }
 
-const int Constants::SCREEN_WIDTH = 400;
-const int Constants::SCREEN_HEIGHT = 680;
-const int Constants::TILE_SIZE = 40;
-const int Constants::BOARD_WIDTH = SCREEN_WIDTH / TILE_SIZE;
-const int Constants::BOARD_HEIGHT = SCREEN_HEIGHT / TILE_SIZE;
+const int Constants::TILE_SIZE = 30;
+const int Constants::BOARD_WIDTH = 10;
+const int Constants::BOARD_HEIGHT = 20;
+const int Constants::SCREEN_WIDTH = TILE_SIZE * BOARD_WIDTH;
+const int Constants::SCREEN_HEIGHT = TILE_SIZE * BOARD_HEIGHT;
 
 const vector<TileType> Constants::MAP_TILE_TYPE = {I, J, L, O, S, T, Z}; 
 

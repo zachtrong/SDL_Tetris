@@ -36,21 +36,6 @@ void GameView::startSDL() {
 	printf("initialization successful!\n");
 	
 	drawBackground();
-
-
-	Board b;
-
-	//b[0][0].setType(O);
-	b[0][0] = Tile(O);
-	b[0][1] = Tile(L);
-	b[0][2] = Tile(J);
-	b[1][0] = Tile(S);
-	b[1][1] = Tile(L);
-	b[1][2] = Tile(T);
-	b[2][0] = Tile(O);
-	b[2][1] = Tile(J);
-
-	updateBoard(b);
 }
 
 void GameView::init() {

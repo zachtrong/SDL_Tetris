@@ -79,7 +79,19 @@ const vector< pair<int,int> > GameController::I_WALL_KICK_TESTS[8] = {
 	{ { 0, 0},	{-1, 0},	{ 2, 0},	{-1, 2},	{ 2,-1} }
 };
 
+shared_ptr<GameController> GameController::instance(nullptr);
+
+shared_ptr<GameController> GameController::getInstance() {
+    if (instance == nullptr) {
+        instance = make_shared<GameController>();
+    }
+    return instance;
+}
+
 GameController::GameController() {
+}
+
+GameController::~GameController() {
 }
 
 // ==============================================================================================
@@ -198,6 +210,13 @@ void GameController::collapse() {
 }
 
 
+
+
+
+//public get-set section
+Board* GameController::getBoard() {
+    return &board;
+}
 
 
 

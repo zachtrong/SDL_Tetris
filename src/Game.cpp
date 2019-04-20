@@ -3,6 +3,8 @@
 using namespace std;
 
 shared_ptr<Game> Game::instance(nullptr);
+shared_ptr<GameView> Game::view(GameView::getInstance());
+shared_ptr<GameController> Game::controller(GameController::getInstance());
 
 Game::Game() {
 
@@ -31,5 +33,11 @@ void Game::processEvent() {
 		SDL_WaitEvent(&event);
 		if (event.type == SDL_QUIT)
 			running = false;
+
+		controller->genCurrentTile();
+		controller->addCurrentTileToBoard();
+		view->updateBoard(*controller->getBoard());
+		controller->deleteCurrentTileFromBoard();
+		SDL_Delay(1000);
 	}
 }

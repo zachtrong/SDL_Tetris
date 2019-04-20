@@ -78,6 +78,7 @@ void Test::runTestBoard() {
 }
 
 void Test::runTestTile() {
+    /*
     shared_ptr<Tile> tile;
 
     setTestCase("arbitrary value");
@@ -93,4 +94,5 @@ void Test::runTestTile() {
     tile = make_shared<Tile>(EMPTY);
     assertEqual(tile->getAssetPath(), string("assets/textures/1x/tile_EMPTYmdpi.png"));
     finishTestCase();
+    */
 }
