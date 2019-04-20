@@ -9,6 +9,8 @@ shared_ptr<Game> Game::instance(nullptr);
 shared_ptr<GameView> Game::view(GameView::getInstance());
 shared_ptr<GameController> Game::controller(GameController::getInstance());
 
+vector<pair<int, int>> Game::tilePositions;
+
 Game::Game() {
 
 }
@@ -28,24 +30,16 @@ void Game::start() {
 	processEvent();
 }
 
-Uint32 Game::autoSingleDrop(Uint32 interval, void *param) {
-	if (controller->canDrop()) {
-		controller->singleDrop();
-	} else {
-		controller->genCurrentTile();
-	}
-	return interval;
-}
-
 void Game::processEvent() {
-	SDL_TimerID autoSingleDropEvent = SDL_AddTimer(1000, autoSingleDrop, nullptr);
+	SDL_TimerID autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 
 	SDL_Event event;
 	bool running = true;
 	controller->genCurrentTile();
+	view->updateBoard(*controller->getBoard());
+	renderUpdatedPositions();
 	while (running) {
 		int frameStart = SDL_GetTicks();
-		view->updateBoard(*controller->getBoard());
 
 		if(!SDL_PollEvent(&event)) continue;
 		if (event.type == SDL_QUIT)
@@ -58,4 +52,31 @@ void Game::processEvent() {
 	}
 
 	SDL_RemoveTimer(autoSingleDropEvent);
+}
+
+Uint32 Game::autoSingleDrop(Uint32 interval, __attribute__((unused)) void *param) {
+	if (controller->canDrop()) {
+		controller->singleDrop();
+		renderDeletedPositions();
+		renderUpdatedPositions();
+	} else {
+		controller->genCurrentTile();
+		renderUpdatedPositions();
+	}
+	return interval;
+}
+
+void Game::renderUpdatedPositions() {
+	tilePositions = controller->getCurrentTilePositions();
+	view->updateBoardChangedPositions(
+		*controller->getBoard(), 
+		tilePositions
+	);
+}
+
+void Game::renderDeletedPositions() {
+	view->updateBoardChangedPositions(
+		*controller->getBoard(), 
+		tilePositions
+	);
 }

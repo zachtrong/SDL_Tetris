@@ -137,9 +137,9 @@ void GameView::copyTileToRenderer(Tile *t) {
 	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
 }
 
-void GameView::updateBoardChangedPositions(Board &board, vector<SDL_Point> &positions) {
-	for (SDL_Point &p : positions) {
-		copyTileToRenderer(&board[p.x][p.y]);
+void GameView::updateBoardChangedPositions(Board &board, const vector<pair<int, int> > &positions) {
+	for (const pair<int, int> &p : positions) {
+		copyTileToRenderer(&board[p.first][p.second]);
 	}
 	SDL_RenderPresent(renderer.get());
 }

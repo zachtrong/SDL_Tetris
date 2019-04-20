@@ -13,6 +13,8 @@ private:
 	static shared_ptr<Game> instance;
 	static shared_ptr<GameView> view;
 	static shared_ptr<GameController> controller;
+
+	static vector<pair<int, int>> tilePositions;
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -21,5 +23,7 @@ public:
 
 	void processEvent();
 	void start();
+	static void renderUpdatedPositions();
+	static void renderDeletedPositions();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 };

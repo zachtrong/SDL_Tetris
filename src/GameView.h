@@ -39,5 +39,5 @@ public:
 	shared_ptr<SDL_Surface> createSurface(string path);
     void updateBoard(Board &board);
 	void copyTileToRenderer(Tile *t);
-    void updateBoardChangedPositions(Board &board, vector<SDL_Point> &positions);
+    void updateBoardChangedPositions(Board &board, const vector<pair<int, int>> &positions);
 };
