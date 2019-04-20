@@ -38,6 +38,6 @@ void Game::processEvent() {
 		controller->addCurrentTileToBoard();
 		view->updateBoard(*controller->getBoard());
 		controller->deleteCurrentTileFromBoard();
-		SDL_Delay(1000);
+		SDL_Delay(30);
 	}
 }

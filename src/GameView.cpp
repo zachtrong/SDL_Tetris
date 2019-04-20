@@ -40,7 +40,7 @@ void GameView::startSDL() {
 
 void GameView::init() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		throw new Exception(SDL_GetError());
+		throw Exception(SDL_GetError());
 		return;
 	}
 	initWindow();
@@ -61,7 +61,7 @@ void GameView::initWindow() {
 		)
 	);
 	if (window == nullptr) {
-		throw new Exception(SDL_GetError());
+		throw Exception(SDL_GetError());
 	}
 	windowSurface = PointerDefinition::createSdlSurface(
 		SDL_GetWindowSurface(window.get())
@@ -73,7 +73,7 @@ void GameView::initRenderer() {
 		SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED)
 	);
 	if (renderer == nullptr) {
-		throw new Exception(SDL_GetError());
+		throw Exception(SDL_GetError());
 	}
 	SDL_SetRenderDrawBlendMode(renderer.get(), SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 0);
@@ -82,21 +82,21 @@ void GameView::initRenderer() {
 void GameView::initImage() {
 	int imageFlags = IMG_INIT_PNG;
 	if (!(IMG_Init(imageFlags) && imageFlags)) {
-		throw new Exception(IMG_GetError());
+		throw Exception(IMG_GetError());
 	}
 }
 
 void GameView::initTexture() {
 	texture = createTexture(Constants::BACKGROUND_IMG_PATH);
 	if (texture == nullptr) {
-		throw new Exception(SDL_GetError());
+		throw Exception(SDL_GetError());
 	}
 }
 
 shared_ptr<SDL_Texture> GameView::createTexture(string path) {
 	shared_ptr<SDL_Surface> loadedSurface = createSurface(path);
 	if (loadedSurface == nullptr) {
-		throw new Exception(IMG_GetError());
+		throw Exception(IMG_GetError());
 	}
 	SDL_SetColorKey(loadedSurface.get(), SDL_TRUE, SDL_MapRGBA(loadedSurface->format, 0xff, 0xff, 0xff, 0x00));
 	shared_ptr<SDL_Texture> res = PointerDefinition::createSdlTexture(
@@ -107,8 +107,10 @@ shared_ptr<SDL_Texture> GameView::createTexture(string path) {
 }
 
 shared_ptr<SDL_Surface> GameView::createSurface(string path) {
-	shared_ptr<SDL_Surface> loadedRawSurface(IMG_Load(path.c_str()));
-	shared_ptr<SDL_Surface> loadedSurface(
+	shared_ptr<SDL_Surface> loadedRawSurface = PointerDefinition::createSdlSurface(
+		IMG_Load(path.c_str())
+	);
+	shared_ptr<SDL_Surface> loadedSurface = PointerDefinition::createSdlSurface(
 		SDL_ConvertSurface(loadedRawSurface.get(), windowSurface->format, 0)
 	);
 	return loadedSurface;
@@ -132,11 +134,13 @@ void GameView::updateBoard(Board &board) {
 void GameView::copyTileToRenderer(Tile *t) {
 	auto tileTexture = createTexture(t->getAssetPath());
 	SDL_Rect &rect = t->getPositionOnWindow();
+	printf("render ");
 	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
+	printf("ok\n");
 }
 
 void GameView::updateBoardChangedPositions(Board &board, vector<SDL_Point> &positions) {
-	for (SDL_Point p : positions) {
+	for (SDL_Point &p : positions) {
 		copyTileToRenderer(&board[p.x][p.y]);
 	}
 	SDL_RenderPresent(renderer.get());
