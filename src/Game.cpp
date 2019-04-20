@@ -41,9 +41,83 @@ void Game::processEvent() {
 	while (running) {
 		int frameStart = SDL_GetTicks();
 
-		if(!SDL_PollEvent(&event)) continue;
-		if (event.type == SDL_QUIT)
-			running = false;
+		if(!SDL_PollEvent(&event)) {
+			SDL_Delay(FRAME_PER_SECOND);
+			continue;
+		}
+
+		switch (event.type) {
+			case SDL_QUIT:
+				running = false;
+				break;
+			case SDL_KEYUP:
+				break;
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0) {
+					controller->hardDrop();
+
+					renderDeletedPositions();
+					renderUpdatedPositions();
+
+					autoSingleDrop(0, nullptr);
+					SDL_RemoveTimer(autoSingleDropEvent);
+					autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+				} else if (event.key.keysym.sym == SDLK_LEFT) {
+					static int lastTimePress = SDL_GetTicks();
+					if (event.key.repeat == 0) {
+						controller->moveLeft();
+						renderDeletedPositions();
+						renderUpdatedPositions();
+					} else {
+						int currentTick = SDL_GetTicks();
+						if (currentTick - lastTimePress > 200) {
+							lastTimePress = currentTick;
+							controller->moveLeft();
+							renderDeletedPositions();
+							renderUpdatedPositions();
+						}
+					}
+				} else if (event.key.keysym.sym == SDLK_RIGHT) {
+					static int lastTimePress = SDL_GetTicks();
+					if (event.key.repeat == 0) {
+						controller->moveRight();
+						renderDeletedPositions();
+						renderUpdatedPositions();
+					} else {
+						int currentTick = SDL_GetTicks();
+						if (currentTick - lastTimePress > 200) {
+							lastTimePress = currentTick;
+							controller->moveRight();
+							renderDeletedPositions();
+							renderUpdatedPositions();
+						}
+					}
+				} else if (event.key.keysym.sym == SDLK_DOWN) {
+					static int lastTimePress = SDL_GetTicks();
+					if (event.key.repeat == 0) {
+						autoSingleDrop(0, nullptr);
+						SDL_RemoveTimer(autoSingleDropEvent);
+						autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+					} else {
+						int currentTick = SDL_GetTicks();
+						if (currentTick - lastTimePress > 200) {
+							autoSingleDrop(0, nullptr);
+							SDL_RemoveTimer(autoSingleDropEvent);
+							autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+						}
+					}
+				} else if (event.key.keysym.sym == SDLK_UP) {
+					static int lastTimePress = SDL_GetTicks();
+					if (event.key.repeat == 0) {
+						controller->rotateRight();
+						renderDeletedPositions();
+						renderUpdatedPositions();
+					}
+				}
+				break;
+			default:
+				break;
+		}
 
 		int frameTime = SDL_GetTicks() - frameStart;
 		if (frameTime < FRAME_PER_SECOND) {
@@ -57,12 +131,11 @@ void Game::processEvent() {
 Uint32 Game::autoSingleDrop(Uint32 interval, __attribute__((unused)) void *param) {
 	if (controller->canDrop()) {
 		controller->singleDrop();
-		renderDeletedPositions();
-		renderUpdatedPositions();
 	} else {
 		controller->genCurrentTile();
-		renderUpdatedPositions();
 	}
+	renderDeletedPositions();
+	renderUpdatedPositions();
 	return interval;
 }
 
