@@ -2,6 +2,9 @@
 
 using namespace std;
 
+const int Game::TILE_DROP_DELAY = 500;
+const int Game::FRAME_PER_SECOND = 24;
+const int Game::SDL_DELAY_PER_FRAME = 1000 / FRAME_PER_SECOND;
 shared_ptr<Game> Game::instance(nullptr);
 shared_ptr<GameView> Game::view(GameView::getInstance());
 shared_ptr<GameController> Game::controller(GameController::getInstance());
@@ -25,18 +28,34 @@ void Game::start() {
 	processEvent();
 }
 
+Uint32 Game::autoSingleDrop(Uint32 interval, void *param) {
+	if (controller->canDrop()) {
+		controller->singleDrop();
+	} else {
+		controller->genCurrentTile();
+	}
+	return interval;
+}
 
 void Game::processEvent() {
+	SDL_TimerID autoSingleDropEvent = SDL_AddTimer(1000, autoSingleDrop, nullptr);
+
 	SDL_Event event;
 	bool running = true;
+	controller->genCurrentTile();
 	while (running) {
-		controller->genCurrentTile();
-		controller->addCurrentTileToBoard();
+		int frameStart = SDL_GetTicks();
 		view->updateBoard(*controller->getBoard());
-		controller->deleteCurrentTileFromBoard();
 
 		if(!SDL_PollEvent(&event)) continue;
 		if (event.type == SDL_QUIT)
 			running = false;
+
+		int frameTime = SDL_GetTicks() - frameStart;
+		if (frameTime < FRAME_PER_SECOND) {
+			SDL_Delay(FRAME_PER_SECOND - frameTime);
+		}
 	}
+
+	SDL_RemoveTimer(autoSingleDropEvent);
 }

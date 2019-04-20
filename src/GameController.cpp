@@ -109,6 +109,7 @@ void GameController::genCurrentTile() {
     currentTile = Tile(Constants::MAP_TILE_TYPE[randNum]);
     direction = 0;
     assignCurrentTile();
+    addCurrentTileToBoard();
 }
 
 // DROP FUNCTIONS
@@ -116,9 +117,9 @@ bool GameController::canDrop() {
     // Returns true if we can perform a single drop
     //         false otherwise
     deleteCurrentTileFromBoard();
-    topLeftHeight++;
-    bool can = validateCurrentTile();
     topLeftHeight--;
+    bool can = validateCurrentTile();
+    topLeftHeight++;
     addCurrentTileToBoard();
     return can;
 }
@@ -128,7 +129,7 @@ void GameController::singleDrop() {
         return;
     }
     deleteCurrentTileFromBoard();
-    topLeftHeight++;
+    topLeftHeight--;
     addCurrentTileToBoard();
 }
 
