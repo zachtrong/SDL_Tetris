@@ -30,14 +30,13 @@ void Game::processEvent() {
 	SDL_Event event;
 	bool running = true;
 	while (running) {
-		SDL_WaitEvent(&event);
-		if (event.type == SDL_QUIT)
-			running = false;
-
 		controller->genCurrentTile();
 		controller->addCurrentTileToBoard();
 		view->updateBoard(*controller->getBoard());
 		controller->deleteCurrentTileFromBoard();
-		SDL_Delay(30);
+
+		if(!SDL_PollEvent(&event)) continue;
+		if (event.type == SDL_QUIT)
+			running = false;
 	}
 }

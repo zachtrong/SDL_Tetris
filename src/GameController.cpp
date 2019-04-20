@@ -1,10 +1,4 @@
 #include "GameController.h"
-#include "Constants.h"
-#include "Tile.h"
-#include <iostream>
-#include <random>
-#include <vector>
-#include <ctime>
 #include <cassert>
 using namespace std;
 
@@ -88,7 +82,14 @@ shared_ptr<GameController> GameController::getInstance() {
     return instance;
 }
 
-GameController::GameController() {
+GameController::GameController()
+    :rng(time(0)),
+    board(),
+    currentTile(),
+    direction(),
+    topLeftHeight(),
+    topLeftWidth()
+{
 }
 
 GameController::~GameController() {
@@ -99,8 +100,12 @@ GameController::~GameController() {
 // ==============================================================================================
 
 void GameController::genCurrentTile() {
-    mt19937 rng(time(0));
-    int randNum = rng() % 7;
+    static int lastRandNum = -1;
+    int randNum;
+    do {
+        randNum = rng() % 7;
+    } while (randNum == lastRandNum);
+    lastRandNum = randNum;
     currentTile = Tile(Constants::MAP_TILE_TYPE[randNum]);
     direction = 0;
     assignCurrentTile();

@@ -134,9 +134,7 @@ void GameView::updateBoard(Board &board) {
 void GameView::copyTileToRenderer(Tile *t) {
 	auto tileTexture = createTexture(t->getAssetPath());
 	SDL_Rect &rect = t->getPositionOnWindow();
-	printf("render ");
 	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
-	printf("ok\n");
 }
 
 void GameView::updateBoardChangedPositions(Board &board, vector<SDL_Point> &positions) {

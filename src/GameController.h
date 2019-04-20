@@ -2,10 +2,14 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
-#include <vector>
 #include <memory>
+#include <iostream>
+#include <random>
+#include <vector>
+#include <ctime>
 #include "Constants.h"
 #include "Board.h"
+#include "Tile.h"
 using namespace std;
 
 class GameController {
@@ -21,6 +25,7 @@ private:
 		// --> wall kick tests, map->first is the change of direction, map->second is a vector of tests (see the docs)
 public:
     static shared_ptr<GameController> getInstance();
+    mt19937 rng;
     Board board;
     Tile currentTile;
     int direction; // {0, 1, 2, 3}
