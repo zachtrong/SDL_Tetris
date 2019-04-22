@@ -93,6 +93,7 @@ void Game::singleDropAndRender() {
 	if (controller->canDrop()) {
 		controller->singleDrop();
 	} else {
+		controller->collapse();
 		controller->genCurrentTile();
 	}
 	view->updateBoard(*controller->getBoard());

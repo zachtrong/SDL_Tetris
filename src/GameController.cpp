@@ -200,9 +200,7 @@ void GameController::rotateRight() {
         direction = (direction + 3) % 4; // undo the rotation
     }
 
-    printf("topLeftHeight: %d topLeftWidth: %d\n", topLeftHeight, topLeftWidth);
     addCurrentTileToBoard();
-    printf("rotation done\n");
 }
 
 // COLLAPSE FUNCTION
@@ -305,7 +303,6 @@ void GameController::addCurrentTileToBoard() {
     vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
     for (auto &position : currentTilePositions) {
         int height = position.first, width = position.second;
-        printf("%d %d\n", height, width);
         if (!positionInsideBoard(height, width)) {
             assert(0 && "addCurrentTileToBoard: position is not inside the board!\n");
         }
@@ -358,6 +355,5 @@ bool GameController::wallKick(vector < pair<int,int> > tests) {
             return true;
         }
     }
-    printf("false\n");
     return false;
 }
