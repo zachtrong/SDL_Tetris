@@ -47,6 +47,7 @@ void GameView::init() {
 	initRenderer();
 	initImage();
 	initTexture();
+	initTileTexture();
 }
 
 void GameView::initWindow() {
@@ -116,6 +117,17 @@ shared_ptr<SDL_Surface> GameView::createSurface(string path) {
 	return loadedSurface;
 }
 
+void GameView::initTileTexture() {
+	tileTextures[EMPTY] = createTexture(Tile(EMPTY).getAssetPath());
+	tileTextures[I] = createTexture(Tile(I).getAssetPath());
+	tileTextures[J] = createTexture(Tile(J).getAssetPath());
+	tileTextures[L] = createTexture(Tile(L).getAssetPath());
+	tileTextures[O] = createTexture(Tile(O).getAssetPath());
+	tileTextures[S] = createTexture(Tile(S).getAssetPath());
+	tileTextures[T] = createTexture(Tile(T).getAssetPath());
+	tileTextures[Z] = createTexture(Tile(Z).getAssetPath());
+}
+
 void GameView::drawBackground() {
 	SDL_RenderClear(renderer.get());
 	SDL_RenderCopy(renderer.get(), texture.get(), nullptr, nullptr);
@@ -133,7 +145,7 @@ void GameView::updateBoard(Board &board) {
 
 void GameView::copyTileToRenderer(Tile *t) {
 	lock_guard<mutex> lock(renderMutex);
-	auto tileTexture = createTexture(t->getAssetPath());
+	auto tileTexture = tileTextures[t->getType()];
 	SDL_Rect &rect = t->getPositionOnWindow();
 	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
 }

@@ -7,6 +7,7 @@
 #include <exception>
 #include <vector>
 #include <mutex>
+#include <map>
 #include "Exception.h"
 #include "Constants.h"
 #include "PointerDefinition.h"
@@ -23,6 +24,7 @@ private:
 	shared_ptr<SDL_Surface> windowSurface;
 	shared_ptr<SDL_Renderer> renderer;
 	shared_ptr<SDL_Texture> texture;
+	map<TileType, shared_ptr<SDL_Texture> > tileTextures;
 
 	mutex renderMutex;
 public:
@@ -37,6 +39,7 @@ public:
 	void initRenderer();
 	void initImage();
 	void initTexture();
+	void initTileTexture();
 
 	shared_ptr<SDL_Texture> createTexture(string path);
 	shared_ptr<SDL_Surface> createSurface(string path);
