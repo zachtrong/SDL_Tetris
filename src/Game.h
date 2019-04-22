@@ -21,6 +21,7 @@ private:
 	SDL_TimerID autoSingleDropEvent;
 	SDL_Event event;
 	bool running;
+	static mutex eventMutex;
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -33,6 +34,7 @@ public:
 	void gameLoop();
 	void finish();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
+	static void singleDropAndRender();
 
 	void handleEvent();
 	void handleButtonArrowDown();
