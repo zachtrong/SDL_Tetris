@@ -23,7 +23,5 @@ public:
 
 	void processEvent();
 	void start();
-	static void renderUpdatedPositions();
-	static void renderDeletedPositions();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 };

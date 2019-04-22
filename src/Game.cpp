@@ -37,12 +37,11 @@ void Game::processEvent() {
 	bool running = true;
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
-	renderUpdatedPositions();
 	while (running) {
 		int frameStart = SDL_GetTicks();
 
 		if(!SDL_PollEvent(&event)) {
-			SDL_Delay(FRAME_PER_SECOND);
+			SDL_Delay(SDL_DELAY_PER_FRAME);
 			continue;
 		}
 
@@ -56,8 +55,7 @@ void Game::processEvent() {
 				if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0) {
 					controller->hardDrop();
 
-					renderDeletedPositions();
-					renderUpdatedPositions();
+					view->updateBoard(*controller->getBoard());
 
 					autoSingleDrop(0, nullptr);
 					SDL_RemoveTimer(autoSingleDropEvent);
@@ -66,30 +64,26 @@ void Game::processEvent() {
 					static int lastTimePress = SDL_GetTicks();
 					if (event.key.repeat == 0) {
 						controller->moveLeft();
-						renderDeletedPositions();
-						renderUpdatedPositions();
+						view->updateBoard(*controller->getBoard());
 					} else {
 						int currentTick = SDL_GetTicks();
 						if (currentTick - lastTimePress > 200) {
 							lastTimePress = currentTick;
 							controller->moveLeft();
-							renderDeletedPositions();
-							renderUpdatedPositions();
+							view->updateBoard(*controller->getBoard());
 						}
 					}
 				} else if (event.key.keysym.sym == SDLK_RIGHT) {
 					static int lastTimePress = SDL_GetTicks();
 					if (event.key.repeat == 0) {
 						controller->moveRight();
-						renderDeletedPositions();
-						renderUpdatedPositions();
+						view->updateBoard(*controller->getBoard());
 					} else {
 						int currentTick = SDL_GetTicks();
 						if (currentTick - lastTimePress > 200) {
 							lastTimePress = currentTick;
 							controller->moveRight();
-							renderDeletedPositions();
-							renderUpdatedPositions();
+							view->updateBoard(*controller->getBoard());
 						}
 					}
 				} else if (event.key.keysym.sym == SDLK_DOWN) {
@@ -110,8 +104,7 @@ void Game::processEvent() {
 					static int lastTimePress = SDL_GetTicks();
 					if (event.key.repeat == 0) {
 						controller->rotateRight();
-						renderDeletedPositions();
-						renderUpdatedPositions();
+						view->updateBoard(*controller->getBoard());
 					}
 				}
 				break;
@@ -120,8 +113,8 @@ void Game::processEvent() {
 		}
 
 		int frameTime = SDL_GetTicks() - frameStart;
-		if (frameTime < FRAME_PER_SECOND) {
-			SDL_Delay(FRAME_PER_SECOND - frameTime);
+		if (frameTime < SDL_DELAY_PER_FRAME) {
+			SDL_Delay(SDL_DELAY_PER_FRAME - frameTime);
 		}
 	}
 
@@ -134,22 +127,6 @@ Uint32 Game::autoSingleDrop(Uint32 interval, __attribute__((unused)) void *param
 	} else {
 		controller->genCurrentTile();
 	}
-	renderDeletedPositions();
-	renderUpdatedPositions();
+	view->updateBoard(*controller->getBoard());
 	return interval;
-}
-
-void Game::renderUpdatedPositions() {
-	tilePositions = controller->getCurrentTilePositions();
-	view->updateBoardChangedPositions(
-		*controller->getBoard(), 
-		tilePositions
-	);
-}
-
-void Game::renderDeletedPositions() {
-	view->updateBoardChangedPositions(
-		*controller->getBoard(), 
-		tilePositions
-	);
 }

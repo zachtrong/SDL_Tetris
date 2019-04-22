@@ -23,6 +23,10 @@ TileType Tile::getType() const {
     return type;
 }
 
+void Tile::setType(const TileType &t) {
+    this->type = t;
+}
+
 void Tile::setPositionOnWindow(int x, int y, int w, int h) {
     positionOnWindow.x = x;
     positionOnWindow.y = y;

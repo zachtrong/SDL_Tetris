@@ -29,6 +29,7 @@ public:
     Tile(TileType type = EMPTY);
     string getAssetPath() const;
     TileType getType() const;
+    void setType(const TileType &t);
     virtual ~Tile();
 
     void setPositionOnWindow(int x, int y, int w, int h);

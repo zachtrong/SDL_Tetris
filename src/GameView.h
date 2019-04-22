@@ -6,6 +6,7 @@
 #include <memory>
 #include <exception>
 #include <vector>
+#include <mutex>
 #include "Exception.h"
 #include "Constants.h"
 #include "PointerDefinition.h"
@@ -22,6 +23,8 @@ private:
 	shared_ptr<SDL_Surface> windowSurface;
 	shared_ptr<SDL_Renderer> renderer;
 	shared_ptr<SDL_Texture> texture;
+
+	mutex renderMutex;
 public:
     static shared_ptr<GameView> getInstance();
     GameView();

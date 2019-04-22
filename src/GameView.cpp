@@ -132,6 +132,7 @@ void GameView::updateBoard(Board &board) {
 }
 
 void GameView::copyTileToRenderer(Tile *t) {
+	lock_guard<mutex> lock(renderMutex);
 	auto tileTexture = createTexture(t->getAssetPath());
 	SDL_Rect &rect = t->getPositionOnWindow();
 	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
