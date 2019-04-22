@@ -36,7 +36,7 @@ public:
     virtual ~GameController();
 
     // Main functions
-    void collapse();
+    int collapse();
     void genCurrentTile();
     bool canDrop();
     void singleDrop();

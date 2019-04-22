@@ -9,6 +9,7 @@ const int Game::DELAY_CONTINUOUS_KEY = 200;
 shared_ptr<Game> Game::instance(nullptr);
 shared_ptr<GameView> Game::view(GameView::getInstance());
 shared_ptr<GameController> Game::controller(GameController::getInstance());
+shared_ptr<GameSound> Game::sound(GameSound::getInstance());
 
 vector<pair<int, int>> Game::tilePositions;
 mutex Game::eventMutex;
@@ -28,7 +29,11 @@ shared_ptr<Game> Game::getInstance() {
 }
 
 void Game::start() {
-	GameView::getInstance()->startSDL();
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+		throw Exception(SDL_GetError());
+	}
+	view->startSDL();
+	sound->initSound();
 	init();
 	gameLoop();
 	finish();
@@ -144,6 +149,7 @@ void Game::handleButtonArrowLeft() {
 	if (keystate[SDL_SCANCODE_DOWN]) {
 		controller->singleDrop();
 	}
+	sound->playMoveLeftRight();
 	view->updateBoard(*controller->getBoard());
 }
 
@@ -161,6 +167,7 @@ void Game::handleButtonArrowRight() {
 	if (keystate[SDL_SCANCODE_DOWN]) {
 		controller->singleDrop();
 	}
+	sound->playMoveLeftRight();
 	view->updateBoard(*controller->getBoard());
 }
 
@@ -176,9 +183,11 @@ void Game::handleButtonArrowRightContinuous() {
 void Game::handleButtonSpace() {
 	SDL_RemoveTimer(autoSingleDropEvent);
 	controller->hardDrop();
-	view->updateBoard(*controller->getBoard());
-	controller->collapse();
-	view->updateBoard(*controller->getBoard());
+	if (controller->collapse()) {
+		sound->playLineClear();
+	} else {
+		sound->playHardDrop();
+	}
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);

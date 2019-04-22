@@ -29,3 +29,14 @@ shared_ptr<SDL_Surface> PointerDefinition::createSdlSurface(SDL_Surface *p) {
 	shared_ptr<SDL_Surface> res(p, SDL_FreeSurface);
 	return res;
 }
+
+
+shared_ptr<Mix_Music> PointerDefinition::createMixMusic(Mix_Music *p) {
+	shared_ptr<Mix_Music> res(p, Mix_FreeMusic);
+	return res;
+}
+
+shared_ptr<Mix_Chunk> PointerDefinition::createMixChunk(Mix_Chunk *p) {
+	shared_ptr<Mix_Chunk> res(p, Mix_FreeChunk);
+	return res;
+}

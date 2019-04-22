@@ -204,7 +204,7 @@ void GameController::rotateRight() {
 }
 
 // COLLAPSE FUNCTION
-void GameController::collapse() {
+int GameController::collapse() {
     vector<int> fullTileHeightDescending = getFullTileHeightDescending();
 
     int numDeleted = 0;
@@ -219,6 +219,7 @@ void GameController::collapse() {
             board[height + numDeleted][width] = board[height][width];
         }
     }
+    return numDeleted;
 }
 
 

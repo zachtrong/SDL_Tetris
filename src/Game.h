@@ -3,7 +3,9 @@
 #include <mutex>
 #include "GameView.h"
 #include "GameController.h"
+#include "GameSound.h"
 #include "SDL.h"
+#include "SDL_mixer.h"
 
 using namespace std;
 
@@ -17,6 +19,7 @@ private:
 	static shared_ptr<Game> instance;
 	static shared_ptr<GameView> view;
 	static shared_ptr<GameController> controller;
+	static shared_ptr<GameSound> sound;
 
 	static vector<pair<int, int>> tilePositions;
 	static mutex eventMutex;
