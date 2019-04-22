@@ -78,8 +78,13 @@ void Game::handleEvent() {
 		return;
 	}
 	if (event.type == SDL_KEYDOWN) {
-		FunctionPointer fp = eventMap[make_pair(event.key.keysym.sym, event.key.repeat)];
-		(this->*fp)();
+		pair<int, int> eventKey = make_pair(event.key.keysym.sym, event.key.repeat);
+		auto it = eventMap.find(eventKey);
+		if (it != eventMap.end()) {
+			FunctionPointer fp = it->second;
+
+			(this->*fp)();
+		}
 	}
 }
 
@@ -100,13 +105,13 @@ void Game::singleDropAndRender() {
 }
 
 void Game::handleButtonArrowDown() {
-	singleDropAndRender();
-	SDL_RemoveTimer(autoSingleDropEvent);
-	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+	controller->singleDrop();
+	view->updateBoard(*controller->getBoard());
 }
 
 void Game::handleButtonArrowDownContinuous() {
-	
+	SDL_RemoveTimer(autoSingleDropEvent);
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
 
 void Game::handleButtonArrowUp() {
@@ -115,7 +120,6 @@ void Game::handleButtonArrowUp() {
 }
 
 void Game::handleButtonArrowUpContinuous() {
-
 }
 
 void Game::handleButtonArrowLeft() {
@@ -137,11 +141,10 @@ void Game::handleButtonArrowRightContinuous() {
 }
 
 void Game::handleButtonSpace() {
-	controller->hardDrop();
-	view->updateBoard(*controller->getBoard());
-
-	singleDropAndRender();
 	SDL_RemoveTimer(autoSingleDropEvent);
+	controller->hardDrop();
+	controller->genCurrentTile();
+	view->updateBoard(*controller->getBoard());
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
 

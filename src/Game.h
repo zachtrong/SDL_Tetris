@@ -19,6 +19,7 @@ private:
 
 	static vector<pair<int, int>> tilePositions;
 	static mutex eventMutex;
+	static int lastTimeAccess;
 
 	map<pair<int, int>, FunctionPointer> eventMap;
 	SDL_TimerID autoSingleDropEvent;
