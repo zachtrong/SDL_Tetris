@@ -22,12 +22,13 @@ private:
 public:
     int score;
     int combo;
-    bool isLastMoveRotate; // not proceesed yet
+    bool isLastMoveRotate;
     bool isLastLockDifficult;
 
     GameScoring();
     virtual ~GameScoring();
 
+    void debug();
     void handleScore(int numLineClear, int topLeftHeight, int topLeftWidth, Tile &currentTile, Board &board);
     bool checkTSpin(int topLeftHeight, int topLeftWidth, Tile &currentTile, Board &board);
     bool checkBtB(bool isThisLockDifficult);

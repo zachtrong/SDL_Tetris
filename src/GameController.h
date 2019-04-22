@@ -10,6 +10,7 @@
 #include "Constants.h"
 #include "Board.h"
 #include "Tile.h"
+#include "GameScoring.h"
 using namespace std;
 
 class GameController {
@@ -31,6 +32,7 @@ public:
     int direction; // {0, 1, 2, 3}
     int topLeftHeight;
     int topLeftWidth;
+    GameScoring scoring;
 
     GameController();
     virtual ~GameController();

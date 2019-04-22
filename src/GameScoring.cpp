@@ -23,12 +23,17 @@ GameScoring::GameScoring() {
     isLastLockDifficult = false;
 }
 
+GameScoring::~GameScoring() {
+}
+
 void GameScoring::handleSoftDropPerCell() {
     score += 1; // 1 point per cell
+    debug();
 }
 
 void GameScoring::handleHardDropPerCell() {
     score += 2; // 2 points per cell
+    debug();
 }
 
 void GameScoring::handleScore(int numLineClear, int topLeftHeight, int topLeftWidth, Tile &currentTile, Board &board) {
@@ -49,6 +54,7 @@ void GameScoring::handleScore(int numLineClear, int topLeftHeight, int topLeftWi
             return;
         }
     }
+    debug();
 }
 
 void GameScoring::updateCombo(int numLineClear) {
@@ -81,7 +87,7 @@ bool GameScoring::checkTSpin(int topLeftHeight, int topLeftWidth, Tile &currentT
             if (diffHeight == 0 || diffWidth == 0) continue; // only -1 and +1
             int height = centerHeight + diffHeight;
             int width = centerWidth + diffWidth;
-            numOccupied += (isWallOrFloor(height, width) || board[height][width].getType != EMPTY);
+            numOccupied += (isWallOrFloor(height, width) || board[height][width].getType() != EMPTY);
         }
     }
     if (numOccupied != 3) return false;
@@ -97,4 +103,8 @@ bool GameScoring::checkBtB(bool isThisLockDifficult) {
 
 bool GameScoring::isWallOrFloor(int height, int width) {
     return height == Constants::BOARD_HEIGHT || height == -1 || width == Constants::BOARD_WIDTH || width == -1;
+}
+
+void GameScoring::debug() {
+    printf("score=%d combo=%d isLastMoveRotate=%d isLastLockDifficult=%d\n", score, combo, isLastMoveRotate, isLastLockDifficult);
 }
