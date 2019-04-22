@@ -208,14 +208,15 @@ void GameController::collapse() {
     vector<int> fullTileHeightDescending = getFullTileHeightDescending();
 
     int numDeleted = 0;
-    int ptr = 0;
-    for (int height = Constants::BOARD_HEIGHT - 1; height >= 0; --height) {
-        if (ptr < (int) fullTileHeightDescending.size() && fullTileHeightDescending[ptr] == height) {
+    size_t ptr = 0;
+    for (int height = Constants::BOARD_HEIGHT - 1; height >= Constants::BOARD_HEIGHT/2; --height) {
+        if (ptr < fullTileHeightDescending.size() && fullTileHeightDescending[ptr] == height) {
             ++numDeleted;
+            ++ptr;
             continue;
         }
         for (int width = 0; width < Constants::BOARD_WIDTH; ++width) {
-            board[height][width] = board[height - numDeleted][width];
+            board[height + numDeleted][width] = board[height][width];
         }
     }
 }
@@ -239,7 +240,7 @@ Board* GameController::getBoard() {
 // ==============================================================================================
 vector<int> GameController::getFullTileHeightDescending() {
     vector<int> res;
-    for (int height = Constants::BOARD_HEIGHT - 1; height >= 0; --height) {
+    for (int height = Constants::BOARD_HEIGHT - 1; height >= Constants::BOARD_HEIGHT/2; --height) {
         bool hasEmpty = false;
         for (int width = 0; width < Constants::BOARD_WIDTH; ++width) {
             if (board[height][width].getType() == EMPTY) {

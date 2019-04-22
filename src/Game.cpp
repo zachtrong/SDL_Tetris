@@ -143,6 +143,9 @@ void Game::handleButtonArrowRightContinuous() {
 void Game::handleButtonSpace() {
 	SDL_RemoveTimer(autoSingleDropEvent);
 	controller->hardDrop();
+	view->updateBoard(*controller->getBoard());
+	controller->collapse();
+	view->updateBoard(*controller->getBoard());
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
