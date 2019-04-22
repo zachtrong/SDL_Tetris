@@ -31,7 +31,7 @@ void Game::start() {
 }
 
 void Game::processEvent() {
-	SDL_TimerID autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 
 	SDL_Event event;
 	bool running = true;
@@ -53,58 +53,28 @@ void Game::processEvent() {
 				break;
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0) {
-					controller->hardDrop();
-
-					view->updateBoard(*controller->getBoard());
-
-					autoSingleDrop(0, nullptr);
-					SDL_RemoveTimer(autoSingleDropEvent);
-					autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+					handleButtonSpace();
 				} else if (event.key.keysym.sym == SDLK_LEFT) {
-					static int lastTimePress = SDL_GetTicks();
 					if (event.key.repeat == 0) {
-						controller->moveLeft();
-						view->updateBoard(*controller->getBoard());
+						handleButtonArrowLeft();
 					} else {
-						int currentTick = SDL_GetTicks();
-						if (currentTick - lastTimePress > 200) {
-							lastTimePress = currentTick;
-							controller->moveLeft();
-							view->updateBoard(*controller->getBoard());
-						}
+						handleButtonArrowLeftContinuous();
 					}
 				} else if (event.key.keysym.sym == SDLK_RIGHT) {
-					static int lastTimePress = SDL_GetTicks();
 					if (event.key.repeat == 0) {
-						controller->moveRight();
-						view->updateBoard(*controller->getBoard());
+						handleButtonArrowRight();
 					} else {
-						int currentTick = SDL_GetTicks();
-						if (currentTick - lastTimePress > 200) {
-							lastTimePress = currentTick;
-							controller->moveRight();
-							view->updateBoard(*controller->getBoard());
-						}
+						handleButtonArrowRightContinuous();
 					}
 				} else if (event.key.keysym.sym == SDLK_DOWN) {
-					static int lastTimePress = SDL_GetTicks();
 					if (event.key.repeat == 0) {
-						autoSingleDrop(0, nullptr);
-						SDL_RemoveTimer(autoSingleDropEvent);
-						autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+						handleButtonArrowDown();
 					} else {
-						int currentTick = SDL_GetTicks();
-						if (currentTick - lastTimePress > 200) {
-							autoSingleDrop(0, nullptr);
-							SDL_RemoveTimer(autoSingleDropEvent);
-							autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
-						}
+						handleButtonArrowDownContinuous();
 					}
 				} else if (event.key.keysym.sym == SDLK_UP) {
-					static int lastTimePress = SDL_GetTicks();
 					if (event.key.repeat == 0) {
-						controller->rotateRight();
-						view->updateBoard(*controller->getBoard());
+						handleButtonArrowUp();
 					}
 				}
 				break;
@@ -129,4 +99,50 @@ Uint32 Game::autoSingleDrop(Uint32 interval, __attribute__((unused)) void *param
 	}
 	view->updateBoard(*controller->getBoard());
 	return interval;
+}
+
+void Game::handleButtonArrowDown() {
+	autoSingleDrop(0, nullptr);
+	SDL_RemoveTimer(autoSingleDropEvent);
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+}
+
+void Game::handleButtonArrowDownContinuous() {
+	
+}
+
+void Game::handleButtonArrowUp() {
+	controller->rotateRight();
+	view->updateBoard(*controller->getBoard());
+}
+
+void Game::handleButtonArrowUpContinuous() {
+
+}
+
+void Game::handleButtonArrowLeft() {
+	controller->moveLeft();
+	view->updateBoard(*controller->getBoard());
+}
+
+void Game::handleButtonArrowLeftContinuous() {
+	
+}
+
+void Game::handleButtonArrowRight() {
+	controller->moveRight();
+	view->updateBoard(*controller->getBoard());
+}
+
+void Game::handleButtonArrowRightContinuous() {
+	
+}
+
+void Game::handleButtonSpace() {
+	controller->hardDrop();
+	view->updateBoard(*controller->getBoard());
+
+	autoSingleDrop(0, nullptr);
+	SDL_RemoveTimer(autoSingleDropEvent);
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }

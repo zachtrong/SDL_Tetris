@@ -15,6 +15,7 @@ private:
 	static shared_ptr<GameController> controller;
 
 	static vector<pair<int, int>> tilePositions;
+	SDL_TimerID autoSingleDropEvent;
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -24,4 +25,14 @@ public:
 	void processEvent();
 	void start();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
+
+	void handleButtonArrowDown();
+	void handleButtonArrowDownContinuous();
+	void handleButtonArrowUp();
+	void handleButtonArrowUpContinuous();
+	void handleButtonArrowLeft();
+	void handleButtonArrowLeftContinuous();
+	void handleButtonArrowRight();
+	void handleButtonArrowRightContinuous();
+	void handleButtonSpace();
 };
