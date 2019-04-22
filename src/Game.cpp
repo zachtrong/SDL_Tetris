@@ -27,16 +27,32 @@ shared_ptr<Game> Game::getInstance() {
 
 void Game::start() {
 	GameView::getInstance()->startSDL();
-	processEvent();
+	init();
+	gameLoop();
+	finish();
 }
 
-void Game::processEvent() {
-	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+void Game::init() {
+	initEventMap();
 
-	SDL_Event event;
-	bool running = true;
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+	running = true;
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
+}
+
+void Game::initEventMap() {
+	eventMap[make_pair(SDLK_SPACE, 0)] = handleButtonSpace;
+	eventMap[make_pair(SDLK_LEFT, 0)] = handleButtonArrowLeft;
+	eventMap[make_pair(SDLK_LEFT, 1)] = handleButtonArrowLeftContinuous;
+	eventMap[make_pair(SDLK_RIGHT, 0)] = handleButtonArrowRight;
+	eventMap[make_pair(SDLK_RIGHT, 1)] = handleButtonArrowRightContinuous;
+	eventMap[make_pair(SDLK_DOWN, 0)] = handleButtonArrowDown;
+	eventMap[make_pair(SDLK_DOWN, 1)] = handleButtonArrowDownContinuous;
+	eventMap[make_pair(SDLK_UP, 0)] = handleButtonArrowUp;
+}
+
+void Game::gameLoop() {
 	while (running) {
 		int frameStart = SDL_GetTicks();
 
@@ -45,50 +61,25 @@ void Game::processEvent() {
 			continue;
 		}
 
-		switch (event.type) {
-			case SDL_QUIT:
-				running = false;
-				break;
-			case SDL_KEYUP:
-				break;
-			case SDL_KEYDOWN:
-				if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0) {
-					handleButtonSpace();
-				} else if (event.key.keysym.sym == SDLK_LEFT) {
-					if (event.key.repeat == 0) {
-						handleButtonArrowLeft();
-					} else {
-						handleButtonArrowLeftContinuous();
-					}
-				} else if (event.key.keysym.sym == SDLK_RIGHT) {
-					if (event.key.repeat == 0) {
-						handleButtonArrowRight();
-					} else {
-						handleButtonArrowRightContinuous();
-					}
-				} else if (event.key.keysym.sym == SDLK_DOWN) {
-					if (event.key.repeat == 0) {
-						handleButtonArrowDown();
-					} else {
-						handleButtonArrowDownContinuous();
-					}
-				} else if (event.key.keysym.sym == SDLK_UP) {
-					if (event.key.repeat == 0) {
-						handleButtonArrowUp();
-					}
-				}
-				break;
-			default:
-				break;
-		}
+		handleEvent();
 
 		int frameTime = SDL_GetTicks() - frameStart;
 		if (frameTime < SDL_DELAY_PER_FRAME) {
 			SDL_Delay(SDL_DELAY_PER_FRAME - frameTime);
 		}
 	}
+}
 
-	SDL_RemoveTimer(autoSingleDropEvent);
+void Game::handleEvent() {
+	if (event.type == SDL_QUIT) {
+		running = false;
+		return;
+	}
+	if (event.type == SDL_KEYDOWN) {
+		if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0)
+		FunctionPointer fp = eventMap[make_pair(event.key.keysym.sym, event.key.repeat)];
+		(*fp)();
+	}
 }
 
 Uint32 Game::autoSingleDrop(Uint32 interval, __attribute__((unused)) void *param) {
@@ -145,4 +136,9 @@ void Game::handleButtonSpace() {
 	autoSingleDrop(0, nullptr);
 	SDL_RemoveTimer(autoSingleDropEvent);
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+}
+
+
+void Game::finish() {
+	SDL_RemoveTimer(autoSingleDropEvent);
 }

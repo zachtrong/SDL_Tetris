@@ -36,7 +36,7 @@ Tetris.exe: $(OBJ_FILES)
 
 # Each .o file finds his .cpp counterpart
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	g++ -std=c++17 -g -Wall -Wextra -c -o $@ $< $(INCLUDE) 
+	g++ -std=c++11 -g -Wall -Wextra -c -o $@ $< $(INCLUDE) 
 
 # Release target
 release: $(RELEASE_OBJ_FILES)
@@ -44,11 +44,11 @@ release: $(RELEASE_OBJ_FILES)
 
 # Each .o file finds his .cpp counterpart, with optimisations
 $(RELEASE_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	g++ -std=c++17 -O3 -Wall -Wextra -c -o $@ $< $(INCLUDE) 
+	g++ -std=c++11 -O3 -Wall -Wextra -c -o $@ $< $(INCLUDE) 
 
 test: $(TEST_OBJ_FILES)
 	g++ -DTEST -g -o $(TEST_BUILD_DIR)\$@ $^ $(LIB) $(LIBRAIRIES)
 
 # Each .o file finds his .cpp counterpart
 $(TEST_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	g++ -DTEST -std=c++17 -g -Wall -Wextra -c -o $@ $< $(INCLUDE) 
+	g++ -DTEST -std=c++11 -g -Wall -Wextra -c -o $@ $< $(INCLUDE) 
