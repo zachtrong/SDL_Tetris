@@ -13,6 +13,7 @@ private:
 	static const int TILE_DROP_DELAY;
 	static const int FRAME_PER_SECOND;
 	static const int SDL_DELAY_PER_FRAME;
+	static const int DELAY_CONTINUOUS_KEY;
 	static shared_ptr<Game> instance;
 	static shared_ptr<GameView> view;
 	static shared_ptr<GameController> controller;
@@ -24,6 +25,7 @@ private:
 	map<pair<int, int>, FunctionPointer> eventMap;
 	SDL_TimerID autoSingleDropEvent;
 	SDL_Event event;
+	const Uint8 *keystate;
 	bool running;
 public:
 	static shared_ptr<Game> getInstance();

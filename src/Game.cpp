@@ -5,6 +5,7 @@ using namespace std;
 const int Game::TILE_DROP_DELAY = 500;
 const int Game::FRAME_PER_SECOND = 24;
 const int Game::SDL_DELAY_PER_FRAME = 1000 / FRAME_PER_SECOND;
+const int Game::DELAY_CONTINUOUS_KEY = 200;
 shared_ptr<Game> Game::instance(nullptr);
 shared_ptr<GameView> Game::view(GameView::getInstance());
 shared_ptr<GameController> Game::controller(GameController::getInstance());
@@ -54,6 +55,7 @@ void Game::initEventMap() {
 }
 
 void Game::gameLoop() {
+	keystate = SDL_GetKeyboardState(NULL);
 	while (running) {
 		int frameStart = SDL_GetTicks();
 
@@ -61,6 +63,7 @@ void Game::gameLoop() {
 			SDL_Delay(SDL_DELAY_PER_FRAME);
 			continue;
 		}
+		SDL_PumpEvents();
 
 		handleEvent();
 
@@ -111,6 +114,13 @@ void Game::handleButtonArrowDown() {
 
 void Game::handleButtonArrowDownContinuous() {
 	SDL_RemoveTimer(autoSingleDropEvent);
+	static int lastTimeAccess = SDL_GetTicks();
+	int currentTick = SDL_GetTicks();
+	if (currentTick - lastTimeAccess > DELAY_CONTINUOUS_KEY) {
+		controller->singleDrop();
+		view->updateBoard(*controller->getBoard());
+		currentTick = lastTimeAccess;
+	}
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
 
@@ -120,24 +130,47 @@ void Game::handleButtonArrowUp() {
 }
 
 void Game::handleButtonArrowUpContinuous() {
+	static int lastTimeAccess = SDL_GetTicks();
+	int currentTick = SDL_GetTicks();
+	if (currentTick - lastTimeAccess > DELAY_CONTINUOUS_KEY) {
+		controller->rotateRight();
+		view->updateBoard(*controller->getBoard());
+		currentTick = lastTimeAccess;
+	}
 }
 
 void Game::handleButtonArrowLeft() {
 	controller->moveLeft();
+	if (keystate[SDL_SCANCODE_DOWN]) {
+		controller->singleDrop();
+	}
 	view->updateBoard(*controller->getBoard());
 }
 
 void Game::handleButtonArrowLeftContinuous() {
-	
+	static int lastTimeAccess = SDL_GetTicks();
+	int currentTick = SDL_GetTicks();
+	if (currentTick - lastTimeAccess > DELAY_CONTINUOUS_KEY) {
+		handleButtonArrowLeft();
+		currentTick = lastTimeAccess;
+	}
 }
 
 void Game::handleButtonArrowRight() {
 	controller->moveRight();
+	if (keystate[SDL_SCANCODE_DOWN]) {
+		controller->singleDrop();
+	}
 	view->updateBoard(*controller->getBoard());
 }
 
 void Game::handleButtonArrowRightContinuous() {
-	
+	static int lastTimeAccess = SDL_GetTicks();
+	int currentTick = SDL_GetTicks();
+	if (currentTick - lastTimeAccess > DELAY_CONTINUOUS_KEY) {
+		handleButtonArrowRight();
+		currentTick = lastTimeAccess;
+	}
 }
 
 void Game::handleButtonSpace() {
