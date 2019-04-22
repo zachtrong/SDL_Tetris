@@ -8,7 +8,6 @@ const int Game::SDL_DELAY_PER_FRAME = 1000 / FRAME_PER_SECOND;
 shared_ptr<Game> Game::instance(nullptr);
 shared_ptr<GameView> Game::view(GameView::getInstance());
 shared_ptr<GameController> Game::controller(GameController::getInstance());
-mutex Game::eventMutex;
 
 vector<pair<int, int>> Game::tilePositions;
 
@@ -72,7 +71,6 @@ void Game::gameLoop() {
 }
 
 void Game::handleEvent() {
-	lock_guard<mutex> lock(eventMutex);
 	if (event.type == SDL_QUIT) {
 		running = false;
 		return;
@@ -84,22 +82,17 @@ void Game::handleEvent() {
 }
 
 Uint32 Game::autoSingleDrop(Uint32 interval, __attribute__((unused)) void *param) {
-	lock_guard<mutex> lock(eventMutex);
-	singleDropAndRender();
-	return interval;
-}
-
-void Game::singleDropAndRender() {
 	if (controller->canDrop()) {
 		controller->singleDrop();
 	} else {
 		controller->genCurrentTile();
 	}
 	view->updateBoard(*controller->getBoard());
+	return interval;
 }
 
 void Game::handleButtonArrowDown() {
-	singleDropAndRender();
+	autoSingleDrop(0, nullptr);
 	SDL_RemoveTimer(autoSingleDropEvent);
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
@@ -139,7 +132,7 @@ void Game::handleButtonSpace() {
 	controller->hardDrop();
 	view->updateBoard(*controller->getBoard());
 
-	singleDropAndRender();
+	autoSingleDrop(0, nullptr);
 	SDL_RemoveTimer(autoSingleDropEvent);
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
