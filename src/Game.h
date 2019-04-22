@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <mutex>
 #include "GameView.h"
 #include "GameController.h"
 #include "SDL.h"
@@ -17,6 +18,8 @@ private:
 	static shared_ptr<GameController> controller;
 
 	static vector<pair<int, int>> tilePositions;
+	static mutex eventMutex;
+
 	map<pair<int, int>, FunctionPointer> eventMap;
 	SDL_TimerID autoSingleDropEvent;
 	SDL_Event event;
@@ -33,6 +36,8 @@ public:
 	void gameLoop();
 	void finish();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
+
+	static void singleDropAndRender();
 
 	void handleEvent();
 	void handleButtonArrowDown();

@@ -25,8 +25,6 @@ private:
 	shared_ptr<SDL_Renderer> renderer;
 	shared_ptr<SDL_Texture> texture;
 	map<TileType, shared_ptr<SDL_Texture> > tileTextures;
-
-	mutex renderMutex;
 public:
     static shared_ptr<GameView> getInstance();
     GameView();
