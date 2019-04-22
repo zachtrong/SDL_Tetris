@@ -117,9 +117,9 @@ bool GameController::canDrop() {
     // Returns true if we can perform a single drop
     //         false otherwise
     deleteCurrentTileFromBoard();
-    topLeftHeight--;
-    bool can = validateCurrentTile();
     topLeftHeight++;
+    bool can = validateCurrentTile();
+    topLeftHeight--;
     addCurrentTileToBoard();
     return can;
 }
@@ -129,7 +129,7 @@ void GameController::singleDrop() {
         return;
     }
     deleteCurrentTileFromBoard();
-    topLeftHeight--;
+    topLeftHeight++;
     addCurrentTileToBoard();
 }
 
@@ -176,11 +176,13 @@ void GameController::rotateLeft() {
     int newDirection = (direction + 3) % 4;
     int rotationID = getRotationID(direction, newDirection);
 
+    deleteCurrentTileFromBoard();
     direction = newDirection;
     if (!wallKick(currentTileType == I ? I_WALL_KICK_TESTS[rotationID] : JLSTZ_WALL_KICK_TESTS[rotationID])) {
         // wallKick failed!
         direction = (direction + 1) % 4; // undo the rotation
     }
+    addCurrentTileToBoard();
 }
 
 void GameController::rotateRight() {
@@ -191,11 +193,16 @@ void GameController::rotateRight() {
     int newDirection = (direction + 1) % 4;
     int rotationID = getRotationID(direction, newDirection);
 
+    deleteCurrentTileFromBoard();
     direction = newDirection;
     if (!wallKick(currentTileType == I ? I_WALL_KICK_TESTS[rotationID] : JLSTZ_WALL_KICK_TESTS[rotationID])) {
         // wallKick failed!
         direction = (direction + 3) % 4; // undo the rotation
     }
+
+    printf("topLeftHeight: %d topLeftWidth: %d\n", topLeftHeight, topLeftWidth);
+    addCurrentTileToBoard();
+    printf("rotation done\n");
 }
 
 // COLLAPSE FUNCTION
@@ -251,7 +258,7 @@ vector<int> GameController::getFullTileHeightDescending() {
 }
 
 void GameController::assignCurrentTile() {
-    topLeftHeight = 18;
+    topLeftHeight = 19;
     topLeftWidth = 3;
 }
 
@@ -298,6 +305,7 @@ void GameController::addCurrentTileToBoard() {
     vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
     for (auto &position : currentTilePositions) {
         int height = position.first, width = position.second;
+        printf("%d %d\n", height, width);
         if (!positionInsideBoard(height, width)) {
             assert(0 && "addCurrentTileToBoard: position is not inside the board!\n");
         }
@@ -339,14 +347,17 @@ bool GameController::wallKick(vector < pair<int,int> > tests) {
     // Returns false if all the tests fail
     //         true if one of the tests works, and change the topLeftHeight and topLeftWidth as well
     for (auto test: tests) {
-        topLeftHeight += test.first;
-        topLeftWidth += test.second;
+        topLeftHeight -= test.second;
+        topLeftWidth += test.first;
         if (!validateCurrentTile()) {
             // undo the test
-            topLeftHeight -= test.first;
-            topLeftWidth -= test.second;
+            topLeftHeight += test.second;
+            topLeftWidth -= test.first;
         }
-        return true;
+        else {
+            return true;
+        }
     }
+    printf("false\n");
     return false;
 }

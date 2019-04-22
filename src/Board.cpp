@@ -12,14 +12,15 @@ Tile& BoxArray::operator[](int x) {
     return state[x];
 }
 
+//[20-39][0-9]
 Board::Board()
     :state(new BoxArray[Constants::BOARD_HEIGHT]) {
     
-    for (int i = 0; i < Constants::BOARD_HEIGHT; ++i) {
+    for (int i = Constants::BOARD_HEIGHT/2; i < Constants::BOARD_HEIGHT; ++i) {
         for (int j = 0; j < Constants::BOARD_WIDTH; ++j) {
             this->operator[](i).operator[](j).setPositionOnWindow(
                 Constants::TILE_SIZE * j,
-                Constants::TILE_SIZE * (Constants::BOARD_HEIGHT - i - 1),
+                Constants::TILE_SIZE * (i - Constants::BOARD_HEIGHT/2),
                 Constants::TILE_SIZE,
                 Constants::TILE_SIZE
             );
