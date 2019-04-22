@@ -42,14 +42,14 @@ void Game::init() {
 }
 
 void Game::initEventMap() {
-	eventMap[make_pair(SDLK_SPACE, 0)] = handleButtonSpace;
-	eventMap[make_pair(SDLK_LEFT, 0)] = handleButtonArrowLeft;
-	eventMap[make_pair(SDLK_LEFT, 1)] = handleButtonArrowLeftContinuous;
-	eventMap[make_pair(SDLK_RIGHT, 0)] = handleButtonArrowRight;
-	eventMap[make_pair(SDLK_RIGHT, 1)] = handleButtonArrowRightContinuous;
-	eventMap[make_pair(SDLK_DOWN, 0)] = handleButtonArrowDown;
-	eventMap[make_pair(SDLK_DOWN, 1)] = handleButtonArrowDownContinuous;
-	eventMap[make_pair(SDLK_UP, 0)] = handleButtonArrowUp;
+	eventMap.emplace(make_pair(SDLK_SPACE, 0), &Game::handleButtonSpace);
+	eventMap.emplace(make_pair(SDLK_LEFT, 0), &Game::handleButtonArrowLeft);
+	eventMap.emplace(make_pair(SDLK_LEFT, 1), &Game::handleButtonArrowLeftContinuous);
+	eventMap.emplace(make_pair(SDLK_RIGHT, 0), &Game::handleButtonArrowRight);
+	eventMap.emplace(make_pair(SDLK_RIGHT, 1), &Game::handleButtonArrowRightContinuous);
+	eventMap.emplace(make_pair(SDLK_DOWN, 0), &Game::handleButtonArrowDown);
+	eventMap.emplace(make_pair(SDLK_DOWN, 1), &Game::handleButtonArrowDownContinuous);
+	eventMap.emplace(make_pair(SDLK_UP, 0), &Game::handleButtonArrowUp);
 }
 
 void Game::gameLoop() {
@@ -76,9 +76,8 @@ void Game::handleEvent() {
 		return;
 	}
 	if (event.type == SDL_KEYDOWN) {
-		if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0)
 		FunctionPointer fp = eventMap[make_pair(event.key.keysym.sym, event.key.repeat)];
-		(*fp)();
+		(this->*fp)();
 	}
 }
 
