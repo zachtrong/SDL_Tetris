@@ -39,10 +39,6 @@ void GameView::startSDL() {
 }
 
 void GameView::init() {
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		throw Exception(SDL_GetError());
-		return;
-	}
 	initWindow();
 	initRenderer();
 	initImage();

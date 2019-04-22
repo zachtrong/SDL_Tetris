@@ -3,7 +3,9 @@
 #include <mutex>
 #include "GameView.h"
 #include "GameController.h"
+#include "GameSound.h"
 #include "SDL.h"
+#include "SDL_mixer.h"
 
 using namespace std;
 
@@ -13,9 +15,11 @@ private:
 	static const int TILE_DROP_DELAY;
 	static const int FRAME_PER_SECOND;
 	static const int SDL_DELAY_PER_FRAME;
+	static const int DELAY_CONTINUOUS_KEY;
 	static shared_ptr<Game> instance;
 	static shared_ptr<GameView> view;
 	static shared_ptr<GameController> controller;
+	static shared_ptr<GameSound> sound;
 
 	static vector<pair<int, int>> tilePositions;
 	static mutex eventMutex;
@@ -24,6 +28,7 @@ private:
 	map<pair<int, int>, FunctionPointer> eventMap;
 	SDL_TimerID autoSingleDropEvent;
 	SDL_Event event;
+	const Uint8 *keystate;
 	bool running;
 public:
 	static shared_ptr<Game> getInstance();
