@@ -135,14 +135,19 @@ void GameController::singleDrop() {
 
 void GameController::softDrop() {
     // soft drop: perform 2 single drops
-    singleDrop();
-    singleDrop();
+    for (int turn = 0; turn < 2; ++turn) {
+        if (canDrop()) {
+            singleDrop();
+            scoring.handleSoftDropPerCell();
+        }
+    }
 }
 
 void GameController::hardDrop() {
-    // hard drop: perform single drops until the current tile cannot be dropped anymore
+    // hard drop: perform multiple single drops until the current tile cannot be dropped anymore
     while(canDrop()) {
         singleDrop();
+        scoring.handleHardDropPerCell();
     }
 }
 
@@ -155,6 +160,7 @@ void GameController::moveLeft() {
         topLeftWidth++;
     }
     addCurrentTileToBoard();
+    scoring.isLastMoveRotate = false; // last successful movement is MOVE
 }
 
 void GameController::moveRight() {
@@ -165,6 +171,7 @@ void GameController::moveRight() {
         topLeftWidth--;
     }
     addCurrentTileToBoard();
+    scoring.isLastMoveRotate = false; // last successful movement is MOVE
 }
 
 // ROTATE FUNCTIONS (WITH WALL KICK)
@@ -183,6 +190,10 @@ void GameController::rotateLeft() {
         direction = (direction + 1) % 4; // undo the rotation
     }
     addCurrentTileToBoard();
+
+    if (direction == newDirection) {
+        scoring.isLastMoveRotate = true; // last successful movement is ROTATE
+    }
 }
 
 void GameController::rotateRight() {
@@ -199,27 +210,34 @@ void GameController::rotateRight() {
         // wallKick failed!
         direction = (direction + 3) % 4; // undo the rotation
     }
-
     addCurrentTileToBoard();
+
+    if (direction == newDirection) {
+        scoring.isLastMoveRotate = true; // last successful movement is ROTATE
+    }
 }
 
 // COLLAPSE FUNCTION
 int GameController::collapse() {
     vector<int> fullTileHeightDescending = getFullTileHeightDescending();
 
-    int numDeleted = 0;
+    int numLineClear = 0;
     size_t ptr = 0;
     for (int height = Constants::BOARD_HEIGHT - 1; height >= Constants::BOARD_HEIGHT/2; --height) {
         if (ptr < fullTileHeightDescending.size() && fullTileHeightDescending[ptr] == height) {
-            ++numDeleted;
+            ++numLineClear;
             ++ptr;
             continue;
         }
         for (int width = 0; width < Constants::BOARD_WIDTH; ++width) {
-            board[height + numDeleted][width] = board[height][width];
+            board[height + numLineClear][width] = board[height][width];
         }
     }
-    return numDeleted;
+
+    // activate GameScoring
+    scoring.handleScore(numLineClear, topLeftHeight, topLeftWidth, currentTile, board);
+
+    return numLineClear;
 }
 
 
