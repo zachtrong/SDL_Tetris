@@ -88,7 +88,11 @@ GameController::GameController()
     currentTile(),
     direction(),
     topLeftHeight(),
-    topLeftWidth()
+    topLeftWidth(),
+    scoring(),
+    nextTiles(),
+    holdTile(),
+    isHolding()
 {
 }
 
@@ -100,13 +104,11 @@ GameController::~GameController() {
 // ==============================================================================================
 
 void GameController::genCurrentTile() {
-    static int lastRandNum = -1;
-    int randNum;
-    do {
-        randNum = rng() % 7;
-    } while (randNum == lastRandNum);
-    lastRandNum = randNum;
-    currentTile = Tile(Constants::MAP_TILE_TYPE[randNum]);
+    prepareNextTiles(); // In the beginning of the game, prepare 4 tiles
+
+    currentTile = nextTiles.front(); nextTiles.pop_front(); // get the first tile of {nextTiles}
+    prepareNextTiles(); // push another tile to the back of {nextTiles}
+    
     direction = 0;
     assignCurrentTile();
     addCurrentTileToBoard();
@@ -217,10 +219,26 @@ void GameController::rotateRight() {
     }
 }
 
+// HOLD FUNCTION
+void GameController::hold() {
+    if (isHolding) return;
+    
+    isHolding = true;
+    if (holdTile.getType() == EMPTY) { // In the beginning of the game, holdTile does not exist
+        holdTile = nextTiles.front(); nextTiles.pop_front(); // get the first tile of {nextTiles}
+        prepareNextTiles(); // push another tile to the back of {nextTiles}
+    }
+
+    swap(holdTile, currentTile);
+}
+
 // COLLAPSE FUNCTION
 int GameController::collapse() {
-    vector<int> fullTileHeightDescending = getFullTileHeightDescending();
+    // collapse() is called right after the currentTile is locked.
+    // It updates the board, activates the scoring system and resets holding state, 
+    // then waits for the currentTile to be generated.
 
+    vector<int> fullTileHeightDescending = getFullTileHeightDescending();
     int numLineClear = 0;
     size_t ptr = 0;
     for (int height = Constants::BOARD_HEIGHT - 1; height >= Constants::BOARD_HEIGHT/2; --height) {
@@ -236,6 +254,9 @@ int GameController::collapse() {
 
     // activate GameScoring
     scoring.handleScore(numLineClear, topLeftHeight, topLeftWidth, currentTile, board);
+
+    // reset isHolding
+    isHolding = false;
 
     return numLineClear;
 }
@@ -376,4 +397,16 @@ bool GameController::wallKick(vector < pair<int,int> > tests) {
         }
     }
     return false;
+}
+
+void GameController::prepareNextTiles() {
+    while(nextTiles.size() < 4) {
+        while(int randNum = rng() % 7) {
+            Tile tile = Tile(Constants::MAP_TILE_TYPE[randNum]);
+            if (nextTiles.empty() || nextTiles.back() != tile) {
+                nextTiles.push_back(tile);
+                break;
+            }
+        }
+    }
 }
