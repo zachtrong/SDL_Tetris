@@ -9,6 +9,7 @@ private:
 	Constants();
 	virtual ~Constants();
 public:
+	static const int SCREEN_OFFSET;
 	static const int SCREEN_WIDTH;
 	static const int SCREEN_HEIGHT;
 	static const int TILE_SIZE;

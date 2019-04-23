@@ -19,7 +19,7 @@ Board::Board()
     for (int i = Constants::BOARD_HEIGHT/2; i < Constants::BOARD_HEIGHT; ++i) {
         for (int j = 0; j < Constants::BOARD_WIDTH; ++j) {
             this->operator[](i).operator[](j).setPositionOnWindow(
-                Constants::TILE_SIZE * j,
+                Constants::SCREEN_OFFSET + Constants::TILE_SIZE * j,
                 Constants::TILE_SIZE * (i - Constants::BOARD_HEIGHT/2),
                 Constants::TILE_SIZE,
                 Constants::TILE_SIZE
