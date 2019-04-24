@@ -1,5 +1,4 @@
 #include "GameView.h"
-#include <iostream>
 
 shared_ptr<GameView> GameView::instance(nullptr);
 
@@ -137,9 +136,8 @@ void GameView::initTextureText() {
 	}
 
 	scoringFont = PointerDefinition::createTtfFont(
-		TTF_OpenFont("assets/fonts/agency-fb.ttf", 50)
+		TTF_OpenFont("assets/fonts/agency-fb-bold.ttf", 50)
 	);
-	TTF_SetFontStyle(scoringFont.get(), TTF_STYLE_BOLD);
 }
 
 shared_ptr<SDL_Texture> GameView::createTextureText(const string &text, int fontSize, SDL_Rect *rect) {
@@ -147,7 +145,18 @@ shared_ptr<SDL_Texture> GameView::createTextureText(const string &text, int font
 		TTF_OpenFont("assets/fonts/agency-fb.ttf", fontSize)
 	);
 	shared_ptr<SDL_Surface> surfaceMessage = PointerDefinition::createSdlSurface(
-		TTF_RenderText_Solid(font.get(), text.c_str(), colorWhite)
+		TTF_RenderText_Blended(font.get(), text.c_str(), colorWhite)
+	);
+	*rect = surfaceMessage->clip_rect;
+	shared_ptr<SDL_Texture> textureMessage = PointerDefinition::createSdlTexture(
+		SDL_CreateTextureFromSurface(renderer.get(), surfaceMessage.get())
+	);
+	return textureMessage;
+}
+
+shared_ptr<SDL_Texture> GameView::createTextureTextScoring(const string &text, SDL_Rect *rect) {
+	shared_ptr<SDL_Surface> surfaceMessage = PointerDefinition::createSdlSurface(
+		TTF_RenderText_Blended(scoringFont.get(), text.c_str(), colorWhite)
 	);
 	*rect = surfaceMessage->clip_rect;
 	shared_ptr<SDL_Texture> textureMessage = PointerDefinition::createSdlTexture(
@@ -168,6 +177,7 @@ void GameView::drawTextureText() {
 	drawTextureScore();
 	drawTextureFooter();
 	SDL_RenderPresent(renderer.get());
+	updateScore(0);
 }
 
 void GameView::drawTextureHold() {
@@ -215,4 +225,13 @@ void GameView::copyTileToRenderer(Tile *t) {
 	auto tileTexture = tileTextures[t->getType()];
 	SDL_Rect &rect = t->getPositionOnWindow();
 	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
+}
+
+void GameView::updateScore(int score) {
+	SDL_Rect rect;
+	auto textureScorePoint = createTextureTextScoring(to_string(score), &rect);
+	rect.x = 144 - rect.w / 2;
+	rect.y = 353;
+	SDL_RenderCopy(renderer.get(), textureScorePoint.get(), NULL, &rect);
+	SDL_RenderPresent(renderer.get());
 }

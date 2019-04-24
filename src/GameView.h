@@ -9,6 +9,7 @@
 #include <vector>
 #include <mutex>
 #include <map>
+#include <string>
 #include "Exception.h"
 #include "Constants.h"
 #include "PointerDefinition.h"
@@ -46,6 +47,7 @@ private:
 	void drawTextureFooter();
 
 	shared_ptr<SDL_Texture> createTextureText(const string &text, int fontSize, SDL_Rect *rect);
+	shared_ptr<SDL_Texture> createTextureTextScoring(const string &text, SDL_Rect *rect);
 	shared_ptr<SDL_Texture> createTexture(const string &path);
 	shared_ptr<SDL_Surface> createSurface(const string &path);
 	void copyTileToRenderer(Tile *t);
@@ -56,4 +58,5 @@ public:
 
 	void startSDL();
     void updateBoard(Board &board);
+	void updateScore(int score);
 };
