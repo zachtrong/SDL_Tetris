@@ -7,6 +7,7 @@
 #include <random>
 #include <vector>
 #include <ctime>
+#include <queue>
 #include "Constants.h"
 #include "Board.h"
 #include "Tile.h"
@@ -33,6 +34,9 @@ public:
     int topLeftHeight;
     int topLeftWidth;
     GameScoring scoring;
+    deque <Tile> nextTiles;
+    Tile holdTile;
+    bool isHolding;
 
     GameController();
     virtual ~GameController();
@@ -48,6 +52,7 @@ public:
     void moveRight();
     void rotateLeft();
     void rotateRight();
+    void hold();
 
     //get-set
     Board* getBoard();
@@ -63,4 +68,5 @@ public:
     bool validateCurrentTile();
     int getRotationID(int beforeDirection, int afterDirection);
     bool wallKick(vector < pair<int,int> > tests);
+    void prepareNextTiles();
 };
