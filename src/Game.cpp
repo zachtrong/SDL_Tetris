@@ -90,8 +90,9 @@ void Game::handleEvent() {
 		auto it = eventMap.find(eventKey);
 		if (it != eventMap.end()) {
 			FunctionPointer fp = it->second;
-
 			(this->*fp)();
+
+			view->updateScore(controller->getScore());
 		}
 	}
 }
@@ -110,6 +111,7 @@ void Game::singleDropAndRender() {
 		controller->genCurrentTile();
 	}
 	view->updateBoard(*controller->getBoard());
+	view->updateScore(controller->getScore());
 }
 
 void Game::handleButtonArrowDown() {

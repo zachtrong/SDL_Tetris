@@ -270,6 +270,10 @@ Board* GameController::getBoard() {
     return &board;
 }
 
+int GameController::getScore() {
+    return scoring.score;
+}
+
 
 
 

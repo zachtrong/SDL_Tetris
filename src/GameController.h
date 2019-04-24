@@ -56,6 +56,7 @@ public:
 
     //get-set
     Board* getBoard();
+    int getScore();
 
     // Helper functions
     int getTileID(TileType tileType);

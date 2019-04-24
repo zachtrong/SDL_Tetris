@@ -106,5 +106,7 @@ bool GameScoring::isWallOrFloor(int height, int width) {
 }
 
 void GameScoring::debug() {
+    #ifdef TEST
     printf("score=%d combo=%d isLastMoveRotate=%d isLastLockDifficult=%d\n", score, combo, isLastMoveRotate, isLastLockDifficult);
+    #endif
 }

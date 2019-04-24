@@ -13,10 +13,10 @@ GameView::GameView():
 	window(nullptr),
 	windowSurface(nullptr),
 	renderer(nullptr),
-	texture(nullptr),
 	tileTextures(),
 	scoringFont(nullptr),
-	colorWhite({0xff, 0xff, 0xff, 0xff})
+	colorWhite({0xff, 0xff, 0xff, 0xff}),
+	colorBackground({0x55, 0x60, 0x60, 0xff})
 {
 
 }
@@ -47,7 +47,6 @@ void GameView::init() {
 	initWindow();
 	initRenderer();
 	initImage();
-	initTexture();
 	initTileTexture();
 	initTextureText();
 }
@@ -79,20 +78,19 @@ void GameView::initRenderer() {
 		throw Exception(SDL_GetError());
 	}
 	SDL_SetRenderDrawBlendMode(renderer.get(), SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 0);
+	SDL_SetRenderDrawColor(
+		renderer.get(), 
+		colorBackground.r, 
+		colorBackground.g, 
+		colorBackground.b, 
+		colorBackground.a
+	);
 }
 
 void GameView::initImage() {
 	int imageFlags = IMG_INIT_PNG;
 	if (!(IMG_Init(imageFlags) && imageFlags)) {
 		throw Exception(IMG_GetError());
-	}
-}
-
-void GameView::initTexture() {
-	texture = createTexture(Constants::BACKGROUND_IMG_PATH);
-	if (texture == nullptr) {
-		throw Exception(SDL_GetError());
 	}
 }
 
@@ -167,8 +165,37 @@ shared_ptr<SDL_Texture> GameView::createTextureTextScoring(const string &text, S
 
 void GameView::drawBackground() {
 	SDL_RenderClear(renderer.get());
-	SDL_RenderCopy(renderer.get(), texture.get(), nullptr, nullptr);
+	SDL_Rect rect;
+	rect.x = rect.y = 0;
+	rect.w = Constants::SCREEN_WIDTH;
+	rect.h = Constants::SCREEN_HEIGHT;
+	SDL_RenderFillRect(renderer.get(), &rect);
+	drawLinesOnBackground();
 	SDL_RenderPresent(renderer.get());
+
+	SDL_SetRenderDrawColor(
+		renderer.get(), 
+		colorBackground.r, 
+		colorBackground.g, 
+		colorBackground.b, 
+		colorBackground.a
+	);
+}
+
+void GameView::drawLinesOnBackground() {
+	SDL_Rect rect;
+	SDL_SetRenderDrawColor(renderer.get(), 0x71, 0x71, 0x71, 0xff);
+	rect.x = Constants::SCREEN_OFFSET - Constants::BOARD_BORDER_SIZE;
+	rect.y = 0;
+	rect.w = Constants::BOARD_BORDER_SIZE;
+	rect.h = Constants::SCREEN_HEIGHT;
+	SDL_RenderFillRect(renderer.get(), &rect);
+
+	rect.x = Constants::SCREEN_OFFSET*2;
+	rect.y = 0;
+	rect.w = Constants::BOARD_BORDER_SIZE;
+	rect.h = Constants::SCREEN_HEIGHT;
+	SDL_RenderFillRect(renderer.get(), &rect);
 }
 
 void GameView::drawTextureText() {
@@ -229,9 +256,16 @@ void GameView::copyTileToRenderer(Tile *t) {
 
 void GameView::updateScore(int score) {
 	SDL_Rect rect;
+	rect.x = 0;
+	rect.y = 353;
+	rect.w = Constants::SCREEN_OFFSET - Constants::BOARD_BORDER_SIZE;
+	rect.h = 54;
+	SDL_RenderFillRect(renderer.get(), &rect);
+
 	auto textureScorePoint = createTextureTextScoring(to_string(score), &rect);
 	rect.x = 144 - rect.w / 2;
 	rect.y = 353;
+
 	SDL_RenderCopy(renderer.get(), textureScorePoint.get(), NULL, &rect);
 	SDL_RenderPresent(renderer.get());
 }

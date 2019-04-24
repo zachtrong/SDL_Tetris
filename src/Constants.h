@@ -15,6 +15,7 @@ public:
 	static const int TILE_SIZE;
     static const int BOARD_WIDTH;
     static const int BOARD_HEIGHT;
+    static const int BOARD_BORDER_SIZE;
 	static const vector<TileType> MAP_TILE_TYPE;
 
 	static const char* const GAME_TITLE;

@@ -25,20 +25,21 @@ private:
 	shared_ptr<SDL_Window> window;
 	shared_ptr<SDL_Surface> windowSurface;
 	shared_ptr<SDL_Renderer> renderer;
-	shared_ptr<SDL_Texture> texture;
 	map<TileType, shared_ptr<SDL_Texture> > tileTextures;
 
 	shared_ptr<TTF_Font> scoringFont;
 	SDL_Color colorWhite;
+	SDL_Color colorBackground;
 
 	void init();
 	void initWindow();
 	void initRenderer();
 	void initImage();
-	void initTexture();
 	void initTileTexture();
 	void initTextureText();
+
 	void drawBackground();
+	void drawLinesOnBackground();
 
 	void drawTextureText();
 	void drawTextureHold();
