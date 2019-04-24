@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const int Game::TILE_DROP_DELAY = 500;
+const int Game::TILE_DROP_DELAY = 750;
 const int Game::FRAME_PER_SECOND = 24;
 const int Game::SDL_DELAY_PER_FRAME = 1000 / FRAME_PER_SECOND;
 const int Game::DELAY_CONTINUOUS_KEY = 200;
@@ -57,6 +57,13 @@ void Game::initEventMap() {
 	eventMap.emplace(make_pair(SDLK_DOWN, 0), &Game::handleButtonArrowDown);
 	eventMap.emplace(make_pair(SDLK_DOWN, 1), &Game::handleButtonArrowDownContinuous);
 	eventMap.emplace(make_pair(SDLK_UP, 0), &Game::handleButtonArrowUp);
+	eventMap.emplace(make_pair(SDLK_z, 0), &Game::handleButtonZ);
+	eventMap.emplace(make_pair(SDLK_x, 0), &Game::handleButtonX);
+	eventMap.emplace(make_pair(SDLK_c, 0), &Game::handleButtonC);
+	eventMap.emplace(make_pair(SDLK_LSHIFT, 0), &Game::handleButtonShift);
+	eventMap.emplace(make_pair(SDLK_ESCAPE, 0), &Game::handleButtonEscape);
+	eventMap.emplace(make_pair(SDLK_p, 0), &Game::handleButtonP);
+	eventMap.emplace(make_pair(SDLK_LCTRL, 0), &Game::handleButtonCtrl);
 }
 
 void Game::gameLoop() {
@@ -195,6 +202,37 @@ void Game::handleButtonSpace() {
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
 
+void Game::handleButtonZ() {
+	controller->rotateLeft();
+	view->updateBoard(*controller->getBoard());
+}
+
+void Game::handleButtonX() {
+	//TODO
+}
+
+void Game::handleButtonC() {
+	controller->hold();
+	view->updateBoard(*controller->getBoard());
+}
+
+void Game::handleButtonCtrl() {
+	controller->hold();
+	view->updateBoard(*controller->getBoard());
+}
+
+void Game::handleButtonShift() {
+	controller->rotateLeft();
+	view->updateBoard(*controller->getBoard());
+}
+
+void Game::handleButtonEscape() {
+	//TODO
+}
+
+void Game::handleButtonP() {
+	//TODO
+}
 
 void Game::finish() {
 	SDL_RemoveTimer(autoSingleDropEvent);

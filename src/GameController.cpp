@@ -229,7 +229,10 @@ void GameController::hold() {
         prepareNextTiles(); // push another tile to the back of {nextTiles}
     }
 
+    deleteCurrentTileFromBoard();
     swap(holdTile, currentTile);
+    assignCurrentTile();
+    addCurrentTileToBoard();
 }
 
 // COLLAPSE FUNCTION

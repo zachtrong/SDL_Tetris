@@ -55,4 +55,11 @@ public:
 	void handleButtonArrowRight();
 	void handleButtonArrowRightContinuous();
 	void handleButtonSpace();
+	void handleButtonZ();
+	void handleButtonX();
+	void handleButtonC();
+	void handleButtonCtrl();
+	void handleButtonShift();
+	void handleButtonEscape();
+	void handleButtonP();
 };
