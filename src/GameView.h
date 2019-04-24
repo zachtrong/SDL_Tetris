@@ -3,6 +3,7 @@
 #include <map>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <memory>
 #include <exception>
 #include <vector>
@@ -25,22 +26,34 @@ private:
 	shared_ptr<SDL_Renderer> renderer;
 	shared_ptr<SDL_Texture> texture;
 	map<TileType, shared_ptr<SDL_Texture> > tileTextures;
-public:
-    static shared_ptr<GameView> getInstance();
-    GameView();
-    virtual ~GameView();
 
-	void startSDL();
-	void drawBackground();
+	shared_ptr<TTF_Font> scoringFont;
+	SDL_Color colorWhite;
+
 	void init();
 	void initWindow();
 	void initRenderer();
 	void initImage();
 	void initTexture();
 	void initTileTexture();
+	void initTextureText();
+	void drawBackground();
 
-	shared_ptr<SDL_Texture> createTexture(string path);
-	shared_ptr<SDL_Surface> createSurface(string path);
-    void updateBoard(Board &board);
+	void drawTextureText();
+	void drawTextureHold();
+	void drawTextureNext();
+	void drawTextureScore();
+	void drawTextureFooter();
+
+	shared_ptr<SDL_Texture> createTextureText(const string &text, int fontSize, SDL_Rect *rect);
+	shared_ptr<SDL_Texture> createTexture(const string &path);
+	shared_ptr<SDL_Surface> createSurface(const string &path);
 	void copyTileToRenderer(Tile *t);
+public:
+    static shared_ptr<GameView> getInstance();
+    GameView();
+    virtual ~GameView();
+
+	void startSDL();
+    void updateBoard(Board &board);
 };

@@ -27,5 +27,6 @@ if not exist %buildDir%\SDL2_ttf.dll xcopy /y %extDir%\SDL2_ttf-2.0.14\lib\x86\S
 if not exist %buildDir%\glew32.dll xcopy /y %extDir%\glew-2.1.0\bin\Release\Win32\glew32.dll .
 if not exist %buildDir%\libpng16-16.dll xcopy /y %extDir%\SDL2_image-2.0.2\lib\x86\libpng16-16.dll .
 if not exist %buildDir%\zlib1.dll xcopy /y %extDir%\SDL2_image-2.0.2\lib\x86\zlib1.dll .
+if not exist %buildDir%\libfreetype-6.dll xcopy /y %extDir%\SDL2_ttf-2.0.14\lib\x86\libfreetype-6.dll .
 
 popd

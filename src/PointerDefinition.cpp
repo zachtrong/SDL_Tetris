@@ -40,3 +40,8 @@ shared_ptr<Mix_Chunk> PointerDefinition::createMixChunk(Mix_Chunk *p) {
 	shared_ptr<Mix_Chunk> res(p, Mix_FreeChunk);
 	return res;
 }
+
+shared_ptr<TTF_Font> PointerDefinition::createTtfFont(TTF_Font *p) {
+	shared_ptr<TTF_Font> res(p, TTF_CloseFont);
+	return res;
+}
