@@ -56,6 +56,7 @@ void Game::init() {
 
 void Game::initGamePlay() {
 	scene = PLAY;
+	view->drawScenePlay();
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
@@ -163,7 +164,11 @@ bool Game::isMouseOverInstructionButton() {
 }
 
 void Game::handleMouseClick() {
-	//TODO
+	if (isMouseOverStartButton()) {
+		initGamePlay();
+	} else if (isMouseOverInstructionButton()) {
+		//TODO
+	}
 }
 
 void Game::gameLoopPause() {

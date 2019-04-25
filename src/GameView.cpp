@@ -252,6 +252,13 @@ void GameView::drawTextureNext() {
 }
 
 void GameView::drawTextureScore() {
+	SDL_SetRenderDrawColor(
+		renderer.get(), 
+		colorBackground.r, 
+		colorBackground.g, 
+		colorBackground.b, 
+		colorBackground.a
+	);
 	SDL_Rect rect;
 	auto textureScore = createTextureText("score", 36, &rect);
 	rect.x = 112;
