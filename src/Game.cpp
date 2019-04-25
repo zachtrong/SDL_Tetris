@@ -46,6 +46,7 @@ void Game::init() {
 	running = true;
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
+	view->updatePreparingTile(*controller->getPreparingTiles());
 }
 
 void Game::initEventMap() {
@@ -116,6 +117,7 @@ void Game::singleDropAndRender() {
 	} else {
 		controller->collapse();
 		controller->genCurrentTile();
+		view->updatePreparingTile(*controller->getPreparingTiles());
 	}
 	view->updateBoard(*controller->getBoard());
 	view->updateScore(controller->getScore());
@@ -199,6 +201,7 @@ void Game::handleButtonSpace() {
 	}
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
+	view->updatePreparingTile(*controller->getPreparingTiles());
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
 
@@ -208,22 +211,27 @@ void Game::handleButtonZ() {
 }
 
 void Game::handleButtonX() {
-	//TODO
+	controller->rotateRight();
+	view->updateBoard(*controller->getBoard());
 }
 
 void Game::handleButtonC() {
 	controller->hold();
 	view->updateBoard(*controller->getBoard());
+	view->updateHoldingTile(*controller->getHoldingTile());
+	view->updatePreparingTile(*controller->getPreparingTiles());
 }
 
 void Game::handleButtonCtrl() {
-	controller->hold();
+	controller->rotateLeft();
 	view->updateBoard(*controller->getBoard());
 }
 
 void Game::handleButtonShift() {
-	controller->rotateLeft();
+	controller->hold();
 	view->updateBoard(*controller->getBoard());
+	view->updateHoldingTile(*controller->getHoldingTile());
+	view->updatePreparingTile(*controller->getPreparingTiles());
 }
 
 void Game::handleButtonEscape() {

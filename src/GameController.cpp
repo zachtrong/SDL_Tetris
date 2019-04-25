@@ -276,6 +276,17 @@ int GameController::getScore() {
     return scoring.score;
 }
 
+Tile* GameController::getHoldingTile() {
+    return &holdTile;
+}
+
+vector<Tile>* GameController::getPreparingTiles() {
+    static vector<Tile> res(4);
+    for (size_t i = 0; i < nextTiles.size(); ++i) {
+        res[i] = nextTiles[i];
+    }
+    return &res;
+}
 
 
 

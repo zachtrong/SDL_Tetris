@@ -57,6 +57,8 @@ public:
     //get-set
     Board* getBoard();
     int getScore();
+    Tile* getHoldingTile();
+    vector<Tile>* getPreparingTiles();
 
     // Helper functions
     int getTileID(TileType tileType);

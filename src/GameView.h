@@ -10,6 +10,7 @@
 #include <mutex>
 #include <map>
 #include <string>
+#include <algorithm>
 #include "Exception.h"
 #include "Constants.h"
 #include "PointerDefinition.h"

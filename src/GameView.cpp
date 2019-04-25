@@ -295,6 +295,9 @@ void GameView::copyFullTileToRenderer(Tile *tile, const SDL_Rect &rect) {
 }
 
 void GameView::updatePreparingTile(vector<Tile> &tiles) {
+	if (tiles.size() != 4) {
+		throw Exception("Preparing tiles should have size 4!");
+	}
 	for (size_t i = 0; i < tiles.size(); ++i) {
 		copyFullTileToRenderer(&tiles[i], RECT_PREPARING[i]);
 	}
