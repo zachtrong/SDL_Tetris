@@ -236,14 +236,14 @@ void GameController::hold() {
 
 // GET SHADOW
 vector < pair<int,int> > GameController::getShadow() {
-    Tile tempTile = currentTile;
+    int oldTopLeftHeight = topLeftHeight;
     while(canDrop()) {
         singleDrop();
     }
     
     vector < pair<int,int> > res = getCurrentTilePositions();
     deleteCurrentTileFromBoard();
-    currentTile = tempTile;
+    topLeftHeight = oldTopLeftHeight;
     addCurrentTileToBoard();
 
     return res;
