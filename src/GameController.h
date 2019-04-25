@@ -53,6 +53,7 @@ public:
     void rotateLeft();
     void rotateRight();
     void hold();
+    vector < pair<int,int> > getShadow();
 
     //get-set
     Board* getBoard();
