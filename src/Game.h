@@ -38,6 +38,8 @@ private:
 	bool running;
 	Scene scene;
 	SDL_Point windowPosition;
+	bool mouseOverStart;
+	bool mouseOverInstruction;
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -77,5 +79,8 @@ public:
 	void handleButtonEscape();
 	void handleButtonP();
 	void handleMouseOver();
+	void handleMouseOverStart();
+	void handleMouseOverInstruction();
+	void handleMouseOverBackground();
 	void handleMouseClick();
 };

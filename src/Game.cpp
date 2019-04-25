@@ -20,7 +20,9 @@ Game::Game()
 	event(),
 	keystate(),
 	running(false),
-	scene(START)
+	scene(START),
+	mouseOverStart(false),
+	mouseOverInstruction(false)
 {
 
 }
@@ -119,31 +121,6 @@ void Game::gameLoopStart() {
 	}
 }
 
-void Game::handleMouseOver() {
-	static bool mouseOverStart = false;
-	static bool mouseOverInstruction = false;
-	if (isMouseOverStartButton()) {
-		if (!mouseOverStart) {
-			mouseOverStart = true;
-			view->onMouseOverButtonStart();
-		}
-	} else if (isMouseOverInstructionButton()) {
-		if (!mouseOverInstruction) {
-			mouseOverInstruction = true;
-			view->onMouseOverButtonInstruction();
-		}
-	} else {
-		if (mouseOverStart) {
-			mouseOverStart = false;
-			view->onMouseOutButtonStart();
-		}
-		if (mouseOverInstruction) {
-			mouseOverInstruction = false;
-			view->onMouseOutButtonInstruction();
-		}
-	}
-}
-
 bool Game::isMouseOverStartButton() {
 	return isMouseOverRect(Constants::RECT_START_BUTTON);
 }
@@ -168,6 +145,49 @@ void Game::handleMouseClick() {
 		initGamePlay();
 	} else if (isMouseOverInstructionButton()) {
 		//TODO
+	}
+}
+
+void Game::handleMouseOver() {
+	if (isMouseOverStartButton()) {
+		handleMouseOverStart();
+	} else if (isMouseOverInstructionButton()) {
+		handleMouseOverInstruction();
+	} else {
+		handleMouseOverBackground();
+	}
+}
+
+void Game::handleMouseOverStart() {
+	if (!mouseOverStart) {
+		mouseOverStart = true;
+		view->onMouseOverButtonStart();
+	}
+	if (mouseOverInstruction) {
+		mouseOverInstruction = false;
+		view->onMouseOutButtonInstruction();
+	}
+}
+
+void Game::handleMouseOverInstruction() {
+	if (!mouseOverInstruction) {
+		mouseOverInstruction = true;
+		view->onMouseOverButtonInstruction();
+	}
+	if (mouseOverStart) {
+		mouseOverStart = false;
+		view->onMouseOutButtonStart();
+	}
+}
+
+void Game::handleMouseOverBackground() {
+	if (mouseOverStart) {
+		mouseOverStart = false;
+		view->onMouseOutButtonStart();
+	}
+	if (mouseOverInstruction) {
+		mouseOverInstruction = false;
+		view->onMouseOutButtonInstruction();
 	}
 }
 
