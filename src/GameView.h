@@ -47,9 +47,9 @@ private:
 	void initTileTexture();
 	void initFullTileTexture();
 	void initTextureText();
-	void initData();
 
 	void drawBackground();
+	void drawSceneStartBackground();
 	void drawLinesOnBackground();
 
 	void drawTextureText();
@@ -60,6 +60,7 @@ private:
 
 	shared_ptr<SDL_Texture> createTextureText(const string &text, int fontSize, SDL_Rect *rect);
 	shared_ptr<SDL_Texture> createTextureTextScoring(const string &text, SDL_Rect *rect);
+	shared_ptr<SDL_Texture> createTextureTransparent(const string &path);
 	shared_ptr<SDL_Texture> createTexture(const string &path);
 	shared_ptr<SDL_Surface> createSurface(const string &path);
 	void copyTileToRenderer(Tile *tile);
@@ -70,8 +71,19 @@ public:
     virtual ~GameView();
 
 	void startSDL();
+
+	void drawScenePlay();
+	void drawSceneStart();
+	void onMouseOverButtonStart();
+	void onMouseOutButtonStart();
+	void onMouseOverButtonInstruction();
+	void onMouseOutButtonInstruction();
+	void pauseScene();
+
     void updateBoard(Board &board);
 	void updateHoldingTile(Tile &tile);
 	void updatePreparingTile(vector<Tile> &tiles);
 	void updateScore(int score);
+
+	shared_ptr<SDL_Window> getWindow();
 };

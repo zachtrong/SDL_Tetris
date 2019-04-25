@@ -64,10 +64,7 @@ void GameView::startSDL() {
 	}
 
 	printf("initialization successful!\n");
-	drawBackground();
-	drawTextureText();
-
-	initData();
+	drawSceneStart();
 }
 
 void GameView::init() {
@@ -126,7 +123,18 @@ shared_ptr<SDL_Texture> GameView::createTexture(const string &path) {
 	if (loadedSurface == nullptr) {
 		throw Exception(IMG_GetError());
 	}
-	SDL_SetColorKey(loadedSurface.get(), SDL_TRUE, SDL_MapRGBA(loadedSurface->format, 0xff, 0xff, 0xff, 0x00));
+	auto res = PointerDefinition::createSdlTexture(
+		SDL_CreateTextureFromSurface(renderer.get(), loadedSurface.get())
+	);
+	return res;
+}
+
+shared_ptr<SDL_Texture> GameView::createTextureTransparent(const string &path) {
+	shared_ptr<SDL_Surface> loadedSurface = createSurface(path);
+	if (loadedSurface == nullptr) {
+		throw Exception(IMG_GetError());
+	}
+	SDL_SetColorKey(loadedSurface.get(), SDL_RLEACCEL, loadedSurface->format->Amask);
 	shared_ptr<SDL_Texture> res = PointerDefinition::createSdlTexture(
 		SDL_CreateTextureFromSurface(renderer.get(), loadedSurface.get())
 	);
@@ -138,18 +146,15 @@ shared_ptr<SDL_Surface> GameView::createSurface(const string &path) {
 	shared_ptr<SDL_Surface> loadedRawSurface = PointerDefinition::createSdlSurface(
 		IMG_Load(path.c_str())
 	);
-	shared_ptr<SDL_Surface> loadedSurface = PointerDefinition::createSdlSurface(
-		SDL_ConvertSurface(loadedRawSurface.get(), windowSurface->format, 0)
-	);
-	return loadedSurface;
+	return loadedRawSurface;
 }
 
 void GameView::initTileTexture() {
-	tileTextures[EMPTY] = createTexture(Tile(EMPTY).getAssetPath());
-	fullTileTextures[EMPTY] = createTexture(Tile(EMPTY).getAssetFullTilePath());
+	tileTextures[EMPTY] = createTextureTransparent(Tile(EMPTY).getAssetPath());
+	fullTileTextures[EMPTY] = createTextureTransparent(Tile(EMPTY).getAssetFullTilePath());
 	for (const auto &tileType : Constants::MAP_TILE_TYPE) {
-		tileTextures[tileType] = createTexture(Tile(tileType).getAssetPath());
-		fullTileTextures[tileType] = createTexture(Tile(tileType).getAssetFullTilePath());
+		tileTextures[tileType] = createTextureTransparent(Tile(tileType).getAssetPath());
+		fullTileTextures[tileType] = createTextureTransparent(Tile(tileType).getAssetFullTilePath());
 	}
 }
 
@@ -188,7 +193,10 @@ shared_ptr<SDL_Texture> GameView::createTextureTextScoring(const string &text, S
 	return textureMessage;
 }
 
-void GameView::initData() {
+void GameView::drawScenePlay() {
+	drawBackground();
+	drawTextureText();
+
 	updateScore(0);
 	Tile empty(EMPTY);
 	vector<Tile> empties({empty, empty, empty, empty});
@@ -197,18 +205,15 @@ void GameView::initData() {
 }
 
 void GameView::drawBackground() {
+	SDL_SetRenderDrawColor(
+		renderer.get(), 
+		colorBackground.r, colorBackground.g, colorBackground.b, 
+		colorBackground.a
+	);
 	SDL_RenderClear(renderer.get());
 	SDL_RenderFillRect(renderer.get(), &RECT_BACKGROUND);
 	drawLinesOnBackground();
 	SDL_RenderPresent(renderer.get());
-
-	SDL_SetRenderDrawColor(
-		renderer.get(), 
-		colorBackground.r, 
-		colorBackground.g, 
-		colorBackground.b, 
-		colorBackground.a
-	);
 }
 
 void GameView::drawLinesOnBackground() {
@@ -218,6 +223,11 @@ void GameView::drawLinesOnBackground() {
 }
 
 void GameView::drawTextureText() {
+	SDL_SetRenderDrawColor(
+		renderer.get(), 
+		colorWhite.r, colorWhite.g, colorWhite.b, 
+		colorWhite.a
+	);
 	drawTextureHold();
 	drawTextureNext();
 	drawTextureScore();
@@ -255,6 +265,49 @@ void GameView::drawTextureFooter() {
 	rect.x = 59;
 	rect.y = 555;
 	SDL_RenderCopy(renderer.get(), textureFooter.get(), NULL, &rect);
+}
+
+void GameView::drawSceneStart() {
+	drawSceneStartBackground();
+	SDL_SetRenderDrawColor(
+		renderer.get(), 0x00, 0x00, 0x00, 0x00
+	);
+	auto startButton = createTextureTransparent("assets/textures/button_start_default.png");
+	SDL_RenderCopy(renderer.get(), startButton.get(), nullptr, &Constants::RECT_START_BUTTON);
+	auto instructionButton = createTextureTransparent("assets/textures/button_instruction_default.png");
+	SDL_RenderCopy(renderer.get(), instructionButton.get(), nullptr, &Constants::RECT_INSTRUCTION_BUTTON);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::drawSceneStartBackground() {
+	SDL_RenderClear(renderer.get());
+	shared_ptr<SDL_Texture> backgroundTexture = createTexture("assets/textures/start_scene.png");
+	SDL_RenderCopy(renderer.get(), backgroundTexture.get(), nullptr, &RECT_BACKGROUND);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::onMouseOverButtonStart() {
+	auto startButton = createTextureTransparent("assets/textures/button_start_mouse_over.png");
+	SDL_RenderCopy(renderer.get(), startButton.get(), nullptr, &Constants::RECT_START_BUTTON);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::onMouseOutButtonStart() {
+	drawSceneStart();
+}
+
+void GameView::onMouseOverButtonInstruction() {
+	auto instructionButton = createTextureTransparent("assets/textures/button_instruction_mouse_over.png");
+	SDL_RenderCopy(renderer.get(), instructionButton.get(), nullptr, &Constants::RECT_INSTRUCTION_BUTTON);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::onMouseOutButtonInstruction() {
+	drawSceneStart();
+}
+
+void GameView::pauseScene() {
+	//TODO
 }
 
 void GameView::updateBoard(Board &board) {
@@ -302,4 +355,8 @@ void GameView::updatePreparingTile(vector<Tile> &tiles) {
 		copyFullTileToRenderer(&tiles[i], RECT_PREPARING[i]);
 	}
 	SDL_RenderPresent(renderer.get());
+}
+
+shared_ptr<SDL_Window> GameView::getWindow() {
+	return window;
 }

@@ -9,6 +9,12 @@
 
 using namespace std;
 
+enum Scene {
+	START = 0,
+	PLAY = 1,
+	PAUSE = 2
+};
+
 class Game {
 typedef void (Game::*FunctionPointer)();
 private:
@@ -30,6 +36,8 @@ private:
 	SDL_Event event;
 	const Uint8 *keystate;
 	bool running;
+	Scene scene;
+	SDL_Point windowPosition;
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -38,14 +46,20 @@ public:
 
 	void start();
 	void init();
+	void initGamePlay();
 	void initEventMap();
 	void gameLoop();
+	void gameLoopStart();
+	bool isMouseOverStartButton();
+	bool isMouseOverInstructionButton();
+	bool isMouseOverRect(const SDL_Rect &rect);
+	void gameLoopPause();
+	void gameLoopPlay();
 	void finish();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 
 	static void singleDropAndRender();
-
-	void handleEvent();
+	void handleEventPlay();
 	void handleButtonArrowDown();
 	void handleButtonArrowDownContinuous();
 	void handleButtonArrowUp();
@@ -62,4 +76,6 @@ public:
 	void handleButtonShift();
 	void handleButtonEscape();
 	void handleButtonP();
+	void handleMouseOver();
+	void handleMouseClick();
 };
