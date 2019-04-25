@@ -109,7 +109,6 @@ void GameController::genCurrentTile() {
     currentTile = nextTiles.front(); nextTiles.pop_front(); // get the first tile of {nextTiles}
     prepareNextTiles(); // push another tile to the back of {nextTiles}
     
-    direction = 0;
     assignCurrentTile();
     addCurrentTileToBoard();
 }
@@ -304,6 +303,7 @@ vector<int> GameController::getFullTileHeightDescending() {
 }
 
 void GameController::assignCurrentTile() {
+    direction = 0;
     topLeftHeight = 19;
     topLeftWidth = 3;
 }
