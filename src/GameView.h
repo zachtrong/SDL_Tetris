@@ -22,10 +22,18 @@ using namespace std;
 class GameView {
 private:
     static shared_ptr<GameView> instance;
+	static const SDL_Rect RECT_BACKGROUND;
+	static const SDL_Rect RECT_BORDER_LEFT;
+	static const SDL_Rect RECT_BORDER_RIGHT;
+	static const SDL_Rect RECT_BACKGROUND_SCORE;
+	static const SDL_Rect RECT_HOLDING;
+	static const SDL_Rect RECT_PREPARING[4];
+
 	shared_ptr<SDL_Window> window;
 	shared_ptr<SDL_Surface> windowSurface;
 	shared_ptr<SDL_Renderer> renderer;
 	map<TileType, shared_ptr<SDL_Texture> > tileTextures;
+	map<TileType, shared_ptr<SDL_Texture> > fullTileTextures;
 
 	shared_ptr<TTF_Font> scoringFont;
 	SDL_Color colorWhite;
@@ -36,7 +44,9 @@ private:
 	void initRenderer();
 	void initImage();
 	void initTileTexture();
+	void initFullTileTexture();
 	void initTextureText();
+	void initData();
 
 	void drawBackground();
 	void drawLinesOnBackground();
@@ -51,7 +61,8 @@ private:
 	shared_ptr<SDL_Texture> createTextureTextScoring(const string &text, SDL_Rect *rect);
 	shared_ptr<SDL_Texture> createTexture(const string &path);
 	shared_ptr<SDL_Surface> createSurface(const string &path);
-	void copyTileToRenderer(Tile *t);
+	void copyTileToRenderer(Tile *tile);
+	void copyFullTileToRenderer(Tile *tile, const SDL_Rect &rect);
 public:
     static shared_ptr<GameView> getInstance();
     GameView();
@@ -59,5 +70,7 @@ public:
 
 	void startSDL();
     void updateBoard(Board &board);
+	void updateHoldingTile(Tile &tile);
+	void updatePreparingTile(vector<Tile> &tiles);
 	void updateScore(int score);
 };

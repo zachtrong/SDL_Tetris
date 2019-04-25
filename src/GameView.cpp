@@ -9,11 +9,36 @@ shared_ptr<GameView> GameView::getInstance() {
     return instance;
 }
 
+const SDL_Rect GameView::RECT_BACKGROUND = {
+	0, 0, 
+	Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT
+};
+const SDL_Rect GameView::RECT_BORDER_LEFT = {
+	Constants::SCREEN_OFFSET - Constants::BOARD_BORDER_SIZE, 0,
+	Constants::BOARD_BORDER_SIZE, Constants::SCREEN_HEIGHT
+};
+const SDL_Rect GameView::RECT_BORDER_RIGHT = {
+	Constants::SCREEN_OFFSET*2, 0,
+	Constants::BOARD_BORDER_SIZE, Constants::SCREEN_HEIGHT
+};
+const SDL_Rect GameView::RECT_BACKGROUND_SCORE = {
+	0, 353, 
+	Constants::SCREEN_OFFSET - Constants::BOARD_BORDER_SIZE, 54
+};
+const SDL_Rect GameView::RECT_HOLDING = { 89, 100, 122, 105, };
+const SDL_Rect GameView::RECT_PREPARING[4] = {
+	{Constants::SCREEN_OFFSET*2 + 89, 100, 122, 105},
+	{Constants::SCREEN_OFFSET*2 + 98, 234, 105, 90},
+	{Constants::SCREEN_OFFSET*2 + 105, 353, 91, 78},
+	{Constants::SCREEN_OFFSET*2 + 105, 460, 91, 78}
+};
+
 GameView::GameView(): 
 	window(nullptr),
 	windowSurface(nullptr),
 	renderer(nullptr),
 	tileTextures(),
+	fullTileTextures(),
 	scoringFont(nullptr),
 	colorWhite({0xff, 0xff, 0xff, 0xff}),
 	colorBackground({0x55, 0x60, 0x60, 0xff})
@@ -41,6 +66,8 @@ void GameView::startSDL() {
 	printf("initialization successful!\n");
 	drawBackground();
 	drawTextureText();
+
+	initData();
 }
 
 void GameView::init() {
@@ -119,13 +146,11 @@ shared_ptr<SDL_Surface> GameView::createSurface(const string &path) {
 
 void GameView::initTileTexture() {
 	tileTextures[EMPTY] = createTexture(Tile(EMPTY).getAssetPath());
-	tileTextures[I] = createTexture(Tile(I).getAssetPath());
-	tileTextures[J] = createTexture(Tile(J).getAssetPath());
-	tileTextures[L] = createTexture(Tile(L).getAssetPath());
-	tileTextures[O] = createTexture(Tile(O).getAssetPath());
-	tileTextures[S] = createTexture(Tile(S).getAssetPath());
-	tileTextures[T] = createTexture(Tile(T).getAssetPath());
-	tileTextures[Z] = createTexture(Tile(Z).getAssetPath());
+	fullTileTextures[EMPTY] = createTexture(Tile(EMPTY).getAssetFullTilePath());
+	for (const auto &tileType : Constants::MAP_TILE_TYPE) {
+		tileTextures[tileType] = createTexture(Tile(tileType).getAssetPath());
+		fullTileTextures[tileType] = createTexture(Tile(tileType).getAssetFullTilePath());
+	}
 }
 
 void GameView::initTextureText() {
@@ -163,13 +188,17 @@ shared_ptr<SDL_Texture> GameView::createTextureTextScoring(const string &text, S
 	return textureMessage;
 }
 
+void GameView::initData() {
+	updateScore(0);
+	Tile empty(EMPTY);
+	vector<Tile> empties({empty, empty, empty, empty});
+	updateHoldingTile(empty);
+	updatePreparingTile(empties);
+}
+
 void GameView::drawBackground() {
 	SDL_RenderClear(renderer.get());
-	SDL_Rect rect;
-	rect.x = rect.y = 0;
-	rect.w = Constants::SCREEN_WIDTH;
-	rect.h = Constants::SCREEN_HEIGHT;
-	SDL_RenderFillRect(renderer.get(), &rect);
+	SDL_RenderFillRect(renderer.get(), &RECT_BACKGROUND);
 	drawLinesOnBackground();
 	SDL_RenderPresent(renderer.get());
 
@@ -183,19 +212,9 @@ void GameView::drawBackground() {
 }
 
 void GameView::drawLinesOnBackground() {
-	SDL_Rect rect;
 	SDL_SetRenderDrawColor(renderer.get(), 0x71, 0x71, 0x71, 0xff);
-	rect.x = Constants::SCREEN_OFFSET - Constants::BOARD_BORDER_SIZE;
-	rect.y = 0;
-	rect.w = Constants::BOARD_BORDER_SIZE;
-	rect.h = Constants::SCREEN_HEIGHT;
-	SDL_RenderFillRect(renderer.get(), &rect);
-
-	rect.x = Constants::SCREEN_OFFSET*2;
-	rect.y = 0;
-	rect.w = Constants::BOARD_BORDER_SIZE;
-	rect.h = Constants::SCREEN_HEIGHT;
-	SDL_RenderFillRect(renderer.get(), &rect);
+	SDL_RenderFillRect(renderer.get(), &RECT_BORDER_LEFT);
+	SDL_RenderFillRect(renderer.get(), &RECT_BORDER_RIGHT);
 }
 
 void GameView::drawTextureText() {
@@ -204,7 +223,6 @@ void GameView::drawTextureText() {
 	drawTextureScore();
 	drawTextureFooter();
 	SDL_RenderPresent(renderer.get());
-	updateScore(0);
 }
 
 void GameView::drawTextureHold() {
@@ -248,24 +266,37 @@ void GameView::updateBoard(Board &board) {
 	SDL_RenderPresent(renderer.get());
 }
 
-void GameView::copyTileToRenderer(Tile *t) {
-	auto tileTexture = tileTextures[t->getType()];
-	SDL_Rect &rect = t->getPositionOnWindow();
+void GameView::copyTileToRenderer(Tile *tile) {
+	auto tileTexture = tileTextures[tile->getType()];
+	SDL_Rect &rect = tile->getPositionOnWindow();
 	SDL_RenderCopy(renderer.get(), tileTexture.get(), nullptr, &rect);
 }
 
 void GameView::updateScore(int score) {
-	SDL_Rect rect;
-	rect.x = 0;
-	rect.y = 353;
-	rect.w = Constants::SCREEN_OFFSET - Constants::BOARD_BORDER_SIZE;
-	rect.h = 54;
-	SDL_RenderFillRect(renderer.get(), &rect);
+	SDL_RenderFillRect(renderer.get(), &RECT_BACKGROUND_SCORE);
 
+	SDL_Rect rect;
 	auto textureScorePoint = createTextureTextScoring(to_string(score), &rect);
 	rect.x = 144 - rect.w / 2;
 	rect.y = 353;
 
 	SDL_RenderCopy(renderer.get(), textureScorePoint.get(), NULL, &rect);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::updateHoldingTile(Tile &tile) {
+	copyFullTileToRenderer(&tile, RECT_HOLDING);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::copyFullTileToRenderer(Tile *tile, const SDL_Rect &rect) {
+	auto fullTileTexture = fullTileTextures[tile->getType()];
+	SDL_RenderCopy(renderer.get(), fullTileTexture.get(), nullptr, &rect);
+}
+
+void GameView::updatePreparingTile(vector<Tile> &tiles) {
+	for (size_t i = 0; i < tiles.size(); ++i) {
+		copyFullTileToRenderer(&tiles[i], RECT_PREPARING[i]);
+	}
 	SDL_RenderPresent(renderer.get());
 }

@@ -19,6 +19,14 @@ string Tile::getAssetPath() const {
     return FILE_PREFIX + c + FILE_SUFFIX;
 }
 
+string Tile::getAssetFullTilePath() const {
+    if (type == EMPTY) {
+        return FILE_PREFIX + "EMPTY_full" + FILE_SUFFIX;
+    }
+    char c = type;
+    return FILE_PREFIX + c + "_full" + FILE_SUFFIX;
+}
+
 TileType Tile::getType() const {
     return type;
 }

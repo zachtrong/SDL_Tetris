@@ -28,6 +28,7 @@ private:
 public:
     Tile(TileType type = EMPTY);
     string getAssetPath() const;
+    string getAssetFullTilePath() const;
     TileType getType() const;
     void setType(const TileType &t);
     virtual ~Tile();
