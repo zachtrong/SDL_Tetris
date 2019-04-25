@@ -408,7 +408,8 @@ bool GameController::wallKick(vector < pair<int,int> > tests) {
 
 void GameController::prepareNextTiles() {
     while(nextTiles.size() < 4) {
-        while(int randNum = rng() % 7) {
+        while(true) {
+            int randNum = rng() % 7;
             Tile tile = Tile(Constants::MAP_TILE_TYPE[randNum]);
             if (nextTiles.empty() || nextTiles.back() != tile) {
                 nextTiles.push_back(tile);
