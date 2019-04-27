@@ -9,6 +9,12 @@
 
 using namespace std;
 
+enum Scene {
+	START = 0,
+	PLAY = 1,
+	PAUSE = 2
+};
+
 class Game {
 typedef void (Game::*FunctionPointer)();
 private:
@@ -25,11 +31,17 @@ private:
 	static mutex eventMutex;
 	static int lastTimeAccess;
 
+	static bool newGame;
+	static vector<Scene> scenes;
+	static SDL_TimerID autoSingleDropEvent;
+
 	map<pair<int, int>, FunctionPointer> eventMap;
-	SDL_TimerID autoSingleDropEvent;
 	SDL_Event event;
 	const Uint8 *keystate;
 	bool running;
+	SDL_Point windowPosition;
+	bool mouseOverStart;
+	bool mouseOverInstruction;
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -38,14 +50,22 @@ public:
 
 	void start();
 	void init();
+	static void initStart();
+	void initGamePlay();
 	void initEventMap();
 	void gameLoop();
+	void gameLoopStart();
+	bool isMouseOverStartButton();
+	bool isMouseOverInstructionButton();
+	bool isMouseOverRect(const SDL_Rect &rect);
+	void gameLoopPause();
+	void gameLoopPlay();
+	void handleGamePause();
 	void finish();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 
 	static void singleDropAndRender();
-
-	void handleEvent();
+	void handleEventPlay();
 	void handleButtonArrowDown();
 	void handleButtonArrowDownContinuous();
 	void handleButtonArrowUp();
@@ -62,4 +82,9 @@ public:
 	void handleButtonShift();
 	void handleButtonEscape();
 	void handleButtonP();
+	void handleMouseOver();
+	void handleMouseOverStart();
+	void handleMouseOverInstruction();
+	void handleMouseOverBackground();
+	void handleMouseClick();
 };

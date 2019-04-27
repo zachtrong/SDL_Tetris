@@ -13,9 +13,18 @@ shared_ptr<GameSound> Game::sound(GameSound::getInstance());
 
 vector<pair<int, int>> Game::tilePositions;
 mutex Game::eventMutex;
+vector<Scene> Game::scenes;
+bool Game::newGame = false;
+SDL_TimerID Game::autoSingleDropEvent;
 
-Game::Game() {
-
+Game::Game() 
+	:eventMap(),
+	event(),
+	keystate(),
+	running(false),
+	mouseOverStart(false),
+	mouseOverInstruction(false)
+{
 }
 
 Game::~Game() {
@@ -32,21 +41,40 @@ void Game::start() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		throw Exception(SDL_GetError());
 	}
-	view->startSDL();
-	sound->initSound();
 	init();
+	initStart();
 	gameLoop();
 	finish();
 }
 
 void Game::init() {
+	view->startSDL();
+	sound->initSound();
+	shared_ptr<SDL_Window> window = view->getWindow();
+	SDL_GetWindowPosition(window.get(), &windowPosition.x, &windowPosition.y);
 	initEventMap();
-
-	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 	running = true;
-	controller->genCurrentTile();
+}
+
+void Game::initStart() {
+	scenes.push_back(START);
+	view->drawSceneStart();
+	controller->clearAll();
+	newGame = true;
+}
+
+void Game::initGamePlay() {
+	scenes.push_back(PLAY);
+	view->drawScenePlay();
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+	if (newGame) {
+		newGame = false;
+		controller->genCurrentTile();
+	}
 	view->updateBoard(*controller->getBoard());
+	view->updateHoldingTile(*controller->getHoldingTile());
 	view->updatePreparingTile(*controller->getPreparingTiles());
+	view->updateScore(controller->getScore());
 }
 
 void Game::initEventMap() {
@@ -71,14 +99,24 @@ void Game::gameLoop() {
 	keystate = SDL_GetKeyboardState(NULL);
 	while (running) {
 		int frameStart = SDL_GetTicks();
-
 		if(!SDL_PollEvent(&event)) {
 			SDL_Delay(SDL_DELAY_PER_FRAME);
 			continue;
 		}
 		SDL_PumpEvents();
 
-		handleEvent();
+		if (event.type == SDL_QUIT) {
+			running = false;
+			return;
+		}
+
+		if (scenes.back() == START) {
+			gameLoopStart();
+		} else if (scenes.back() == PAUSE) {
+			gameLoopPause();
+		} else if (scenes.back() == PLAY) {
+			gameLoopPlay();
+		}
 
 		int frameTime = SDL_GetTicks() - frameStart;
 		if (frameTime < SDL_DELAY_PER_FRAME) {
@@ -87,20 +125,107 @@ void Game::gameLoop() {
 	}
 }
 
-void Game::handleEvent() {
-	lock_guard<mutex> lock(eventMutex);
-	if (event.type == SDL_QUIT) {
-		running = false;
-		return;
+void Game::gameLoopStart() {
+	if (event.type == SDL_MOUSEMOTION) {
+		handleMouseOver();
+	} else if (event.type == SDL_MOUSEBUTTONUP) {
+		handleMouseClick();
 	}
+}
+
+bool Game::isMouseOverStartButton() {
+	return isMouseOverRect(Constants::RECT_START_BUTTON);
+}
+
+bool Game::isMouseOverRect(const SDL_Rect &rect) {
+	int mouseX, mouseY;
+	SDL_GetMouseState(&mouseX, &mouseY);
+	return (
+		rect.x <= mouseX
+		&& mouseX <= rect.x + rect.w
+		&& rect.y <= mouseY
+		&& mouseY <= rect.y + rect.h
+	);
+}
+
+bool Game::isMouseOverInstructionButton() {
+	return isMouseOverRect(Constants::RECT_INSTRUCTION_BUTTON);
+}
+
+void Game::handleMouseClick() {
+	if (isMouseOverStartButton()) {
+		initGamePlay();
+	} else if (isMouseOverInstructionButton()) {
+		handleGamePause();
+	}
+}
+
+void Game::handleMouseOver() {
+	if (isMouseOverStartButton()) {
+		handleMouseOverStart();
+	} else if (isMouseOverInstructionButton()) {
+		handleMouseOverInstruction();
+	} else {
+		handleMouseOverBackground();
+	}
+}
+
+void Game::handleMouseOverStart() {
+	if (!mouseOverStart) {
+		mouseOverStart = true;
+		view->onMouseOverButtonStart();
+	}
+	if (mouseOverInstruction) {
+		mouseOverInstruction = false;
+		view->onMouseOutButtonInstruction();
+	}
+}
+
+void Game::handleMouseOverInstruction() {
+	if (!mouseOverInstruction) {
+		mouseOverInstruction = true;
+		view->onMouseOverButtonInstruction();
+	}
+	if (mouseOverStart) {
+		mouseOverStart = false;
+		view->onMouseOutButtonStart();
+	}
+}
+
+void Game::handleMouseOverBackground() {
+	if (mouseOverStart) {
+		mouseOverStart = false;
+		view->onMouseOutButtonStart();
+	}
+	if (mouseOverInstruction) {
+		mouseOverInstruction = false;
+		view->onMouseOutButtonInstruction();
+	}
+}
+
+void Game::gameLoopPause() {
+	if (event.type == SDL_KEYDOWN) {
+		if (event.key.keysym.sym == SDLK_ESCAPE
+			|| event.key.keysym.sym == SDLK_p) {
+			if (event.key.repeat == 0) {
+				handleGamePause();
+			}
+		}
+	} 
+}
+
+void Game::gameLoopPlay() {
+	lock_guard<mutex> lock(eventMutex);
+	handleEventPlay();
+}
+
+void Game::handleEventPlay() {
 	if (event.type == SDL_KEYDOWN) {
 		pair<int, int> eventKey = make_pair(event.key.keysym.sym, event.key.repeat);
 		auto it = eventMap.find(eventKey);
 		if (it != eventMap.end()) {
 			FunctionPointer fp = it->second;
 			(this->*fp)();
-
-			view->updateScore(controller->getScore());
 		}
 	}
 }
@@ -116,11 +241,30 @@ void Game::singleDropAndRender() {
 		controller->singleDrop();
 	} else {
 		controller->collapse();
-		controller->genCurrentTile();
+		if (!controller->genCurrentTile()) {
+			SDL_RemoveTimer(autoSingleDropEvent);
+			initStart();
+			return;
+		}
 		view->updatePreparingTile(*controller->getPreparingTiles());
 	}
 	view->updateBoard(*controller->getBoard());
 	view->updateScore(controller->getScore());
+}
+
+void Game::handleGamePause() {
+	if (scenes.back() != PAUSE) {
+		SDL_RemoveTimer(autoSingleDropEvent);
+		scenes.push_back(PAUSE);
+		view->drawPauseScene();
+	} else {
+		scenes.pop_back();
+		if (scenes.back() == START) {
+			initStart();
+		} else if (scenes.back() == PLAY) {
+			initGamePlay();
+		}
+	}
 }
 
 void Game::handleButtonArrowDown() {
@@ -199,8 +343,12 @@ void Game::handleButtonSpace() {
 	} else {
 		sound->playHardDrop();
 	}
-	controller->genCurrentTile();
+	if (!controller->genCurrentTile()) {
+		initStart();
+		return;
+	}
 	view->updateBoard(*controller->getBoard());
+	view->updateScore(controller->getScore());
 	view->updatePreparingTile(*controller->getPreparingTiles());
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
@@ -235,11 +383,11 @@ void Game::handleButtonShift() {
 }
 
 void Game::handleButtonEscape() {
-	//TODO
+	handleGamePause();
 }
 
 void Game::handleButtonP() {
-	//TODO
+	handleGamePause();
 }
 
 void Game::finish() {

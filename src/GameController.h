@@ -43,7 +43,7 @@ public:
 
     // Main functions
     int collapse();
-    void genCurrentTile();
+    bool genCurrentTile();
     bool canDrop();
     void singleDrop();
     void softDrop();
@@ -54,6 +54,7 @@ public:
     void rotateRight();
     void hold();
     vector < pair<int,int> > getShadow();
+    void clearAll();
 
     //get-set
     Board* getBoard();
@@ -68,7 +69,7 @@ public:
     bool positionInsideBoard(int height, int width);
     vector< pair<int,int> > getCurrentTilePositions();
     void deleteCurrentTileFromBoard();
-    void addCurrentTileToBoard();
+    bool addCurrentTileToBoard();
     bool validateCurrentTile();
     int getRotationID(int beforeDirection, int afterDirection);
     bool wallKick(vector < pair<int,int> > tests);

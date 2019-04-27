@@ -26,13 +26,16 @@ GameScoring::GameScoring() {
 GameScoring::~GameScoring() {
 }
 
-void GameScoring::handleSoftDropPerCell() {
+void GameScoring::handleSingleDropPerCell() {
     score += 1; // 1 point per cell
     debug();
 }
 
 void GameScoring::handleHardDropPerCell() {
-    score += 2; // 2 points per cell
+    // 1 point was added by handleSingleDrop(),
+    // 1 point is added now
+    // 2 points per cell in total
+    score += 1;
     debug();
 }
 
