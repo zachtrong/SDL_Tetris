@@ -13,10 +13,12 @@ shared_ptr<GameSound> Game::sound(GameSound::getInstance());
 
 vector<pair<int, int>> Game::tilePositions;
 mutex Game::eventMutex;
+vector<Scene> Game::scenes;
+bool Game::newGame = false;
+SDL_TimerID Game::autoSingleDropEvent;
 
 Game::Game() 
 	:eventMap(),
-	autoSingleDropEvent(),
 	event(),
 	keystate(),
 	running(false),
@@ -57,10 +59,11 @@ void Game::init() {
 void Game::initStart() {
 	scenes.push_back(START);
 	view->drawSceneStart();
+	controller->clearAll();
+	newGame = true;
 }
 
 void Game::initGamePlay() {
-	static bool newGame = true;
 	scenes.push_back(PLAY);
 	view->drawScenePlay();
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
@@ -238,7 +241,11 @@ void Game::singleDropAndRender() {
 		controller->singleDrop();
 	} else {
 		controller->collapse();
-		controller->genCurrentTile();
+		if (!controller->genCurrentTile()) {
+			SDL_RemoveTimer(autoSingleDropEvent);
+			initStart();
+			return;
+		}
 		view->updatePreparingTile(*controller->getPreparingTiles());
 	}
 	view->updateBoard(*controller->getBoard());
@@ -253,10 +260,8 @@ void Game::handleGamePause() {
 	} else {
 		scenes.pop_back();
 		if (scenes.back() == START) {
-			printf("start");
 			initStart();
 		} else if (scenes.back() == PLAY) {
-			printf("play");
 			initGamePlay();
 		}
 	}
@@ -338,7 +343,10 @@ void Game::handleButtonSpace() {
 	} else {
 		sound->playHardDrop();
 	}
-	controller->genCurrentTile();
+	if (!controller->genCurrentTile()) {
+		initStart();
+		return;
+	}
 	view->updateBoard(*controller->getBoard());
 	view->updateScore(controller->getScore());
 	view->updatePreparingTile(*controller->getPreparingTiles());

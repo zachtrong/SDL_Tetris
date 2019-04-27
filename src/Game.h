@@ -31,12 +31,14 @@ private:
 	static mutex eventMutex;
 	static int lastTimeAccess;
 
+	static bool newGame;
+	static vector<Scene> scenes;
+	static SDL_TimerID autoSingleDropEvent;
+
 	map<pair<int, int>, FunctionPointer> eventMap;
-	SDL_TimerID autoSingleDropEvent;
 	SDL_Event event;
 	const Uint8 *keystate;
 	bool running;
-	vector<Scene> scenes;
 	SDL_Point windowPosition;
 	bool mouseOverStart;
 	bool mouseOverInstruction;
@@ -48,7 +50,7 @@ public:
 
 	void start();
 	void init();
-	void initStart();
+	static void initStart();
 	void initGamePlay();
 	void initEventMap();
 	void gameLoop();

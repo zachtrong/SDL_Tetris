@@ -97,20 +97,22 @@ GameController::GameController()
 }
 
 GameController::~GameController() {
+    delete &board;
+    delete &scoring;
 }
 
 // ==============================================================================================
 // ======================================= Main functions =======================================
 // ==============================================================================================
 
-void GameController::genCurrentTile() {
+bool GameController::genCurrentTile() {
     prepareNextTiles(); // In the beginning of the game, prepare 4 tiles
 
     currentTile = nextTiles.front(); nextTiles.pop_front(); // get the first tile of {nextTiles}
     prepareNextTiles(); // push another tile to the back of {nextTiles}
     
     assignCurrentTile();
-    addCurrentTileToBoard();
+    return addCurrentTileToBoard();
 }
 
 // DROP FUNCTIONS
@@ -278,6 +280,19 @@ int GameController::collapse() {
     return numLineClear;
 }
 
+void GameController::clearAll() {
+    delete &board;
+    board = *(new Board());
+    currentTile = Tile();
+    direction = 0;
+    topLeftHeight = 0;
+    topLeftWidth = 0;
+    delete &scoring;
+    scoring = *(new GameScoring());
+    nextTiles.clear();
+    holdTile = Tile();
+    isHolding = false;
+}
 
 
 
@@ -372,19 +387,23 @@ void GameController::deleteCurrentTileFromBoard() {
     }
 }
 
-void GameController::addCurrentTileToBoard() {
+bool GameController::addCurrentTileToBoard() {
     TileType currentTileType = currentTile.getType();
     vector < pair<int,int> > currentTilePositions = getCurrentTilePositions();
     for (auto &position : currentTilePositions) {
         int height = position.first, width = position.second;
         if (!positionInsideBoard(height, width)) {
-            assert(0 && "addCurrentTileToBoard: position is not inside the board!\n");
+            return false;
         }
         if (board[height][width].getType() != EMPTY) {
-            assert(0 && "addCurrentTileToBoard: cell is not empty to fill.\n");
+            return false;
         }
+    }
+    for (auto &position : currentTilePositions) {
+        int height = position.first, width = position.second;
         board[height][width] = Tile(currentTileType);
     }
+    return true;
 }
 
 bool GameController::validateCurrentTile() {
