@@ -234,6 +234,21 @@ void GameController::hold() {
     addCurrentTileToBoard();
 }
 
+// GET SHADOW
+vector < pair<int,int> > GameController::getShadow() {
+    int oldTopLeftHeight = topLeftHeight;
+    while(canDrop()) {
+        singleDrop();
+    }
+    
+    vector < pair<int,int> > res = getCurrentTilePositions();
+    deleteCurrentTileFromBoard();
+    topLeftHeight = oldTopLeftHeight;
+    addCurrentTileToBoard();
+
+    return res;
+}
+
 // COLLAPSE FUNCTION
 int GameController::collapse() {
     // collapse() is called right after the currentTile is locked.
