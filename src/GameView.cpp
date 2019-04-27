@@ -64,7 +64,6 @@ void GameView::startSDL() {
 	}
 
 	printf("initialization successful!\n");
-	drawSceneStart();
 }
 
 void GameView::init() {
@@ -313,8 +312,10 @@ void GameView::onMouseOutButtonInstruction() {
 	drawSceneStart();
 }
 
-void GameView::pauseScene() {
-	//TODO
+void GameView::drawPauseScene() {
+	auto pauseTexture = createTextureTransparent("assets/textures/instruction.png");
+	SDL_RenderCopy(renderer.get(), pauseTexture.get(), nullptr, &RECT_BACKGROUND);
+	SDL_RenderPresent(renderer.get());
 }
 
 void GameView::updateBoard(Board &board) {

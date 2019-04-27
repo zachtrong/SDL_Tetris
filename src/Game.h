@@ -36,7 +36,7 @@ private:
 	SDL_Event event;
 	const Uint8 *keystate;
 	bool running;
-	Scene scene;
+	vector<Scene> scenes;
 	SDL_Point windowPosition;
 	bool mouseOverStart;
 	bool mouseOverInstruction;
@@ -48,6 +48,7 @@ public:
 
 	void start();
 	void init();
+	void initStart();
 	void initGamePlay();
 	void initEventMap();
 	void gameLoop();
@@ -57,6 +58,7 @@ public:
 	bool isMouseOverRect(const SDL_Rect &rect);
 	void gameLoopPause();
 	void gameLoopPlay();
+	void handleGamePause();
 	void finish();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 

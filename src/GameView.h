@@ -78,7 +78,7 @@ public:
 	void onMouseOutButtonStart();
 	void onMouseOverButtonInstruction();
 	void onMouseOutButtonInstruction();
-	void pauseScene();
+	void drawPauseScene();
 
     void updateBoard(Board &board);
 	void updateHoldingTile(Tile &tile);

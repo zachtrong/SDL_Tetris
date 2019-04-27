@@ -20,11 +20,9 @@ Game::Game()
 	event(),
 	keystate(),
 	running(false),
-	scene(START),
 	mouseOverStart(false),
 	mouseOverInstruction(false)
 {
-
 }
 
 Game::~Game() {
@@ -42,6 +40,7 @@ void Game::start() {
 		throw Exception(SDL_GetError());
 	}
 	init();
+	initStart();
 	gameLoop();
 	finish();
 }
@@ -53,16 +52,26 @@ void Game::init() {
 	SDL_GetWindowPosition(window.get(), &windowPosition.x, &windowPosition.y);
 	initEventMap();
 	running = true;
-	scene = START;
+}
+
+void Game::initStart() {
+	scenes.push_back(START);
+	view->drawSceneStart();
 }
 
 void Game::initGamePlay() {
-	scene = PLAY;
+	static bool newGame = true;
+	scenes.push_back(PLAY);
 	view->drawScenePlay();
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
-	controller->genCurrentTile();
+	if (newGame) {
+		newGame = false;
+		controller->genCurrentTile();
+	}
 	view->updateBoard(*controller->getBoard());
+	view->updateHoldingTile(*controller->getHoldingTile());
 	view->updatePreparingTile(*controller->getPreparingTiles());
+	view->updateScore(controller->getScore());
 }
 
 void Game::initEventMap() {
@@ -98,11 +107,11 @@ void Game::gameLoop() {
 			return;
 		}
 
-		if (scene == START) {
+		if (scenes.back() == START) {
 			gameLoopStart();
-		} else if (scene == PAUSE) {
+		} else if (scenes.back() == PAUSE) {
 			gameLoopPause();
-		} else if (scene == PLAY) {
+		} else if (scenes.back() == PLAY) {
 			gameLoopPlay();
 		}
 
@@ -144,7 +153,7 @@ void Game::handleMouseClick() {
 	if (isMouseOverStartButton()) {
 		initGamePlay();
 	} else if (isMouseOverInstructionButton()) {
-		//TODO
+		handleGamePause();
 	}
 }
 
@@ -192,7 +201,14 @@ void Game::handleMouseOverBackground() {
 }
 
 void Game::gameLoopPause() {
-	//TODO
+	if (event.type == SDL_KEYDOWN) {
+		if (event.key.keysym.sym == SDLK_ESCAPE
+			|| event.key.keysym.sym == SDLK_p) {
+			if (event.key.repeat == 0) {
+				handleGamePause();
+			}
+		}
+	} 
 }
 
 void Game::gameLoopPlay() {
@@ -207,8 +223,6 @@ void Game::handleEventPlay() {
 		if (it != eventMap.end()) {
 			FunctionPointer fp = it->second;
 			(this->*fp)();
-
-			view->updateScore(controller->getScore());
 		}
 	}
 }
@@ -229,6 +243,23 @@ void Game::singleDropAndRender() {
 	}
 	view->updateBoard(*controller->getBoard());
 	view->updateScore(controller->getScore());
+}
+
+void Game::handleGamePause() {
+	if (scenes.back() != PAUSE) {
+		SDL_RemoveTimer(autoSingleDropEvent);
+		scenes.push_back(PAUSE);
+		view->drawPauseScene();
+	} else {
+		scenes.pop_back();
+		if (scenes.back() == START) {
+			printf("start");
+			initStart();
+		} else if (scenes.back() == PLAY) {
+			printf("play");
+			initGamePlay();
+		}
+	}
 }
 
 void Game::handleButtonArrowDown() {
@@ -309,6 +340,7 @@ void Game::handleButtonSpace() {
 	}
 	controller->genCurrentTile();
 	view->updateBoard(*controller->getBoard());
+	view->updateScore(controller->getScore());
 	view->updatePreparingTile(*controller->getPreparingTiles());
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
 }
@@ -343,11 +375,11 @@ void Game::handleButtonShift() {
 }
 
 void Game::handleButtonEscape() {
-	//TODO
+	handleGamePause();
 }
 
 void Game::handleButtonP() {
-	//TODO
+	handleGamePause();
 }
 
 void Game::finish() {
