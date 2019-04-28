@@ -134,6 +134,7 @@ void GameController::singleDrop() {
     deleteCurrentTileFromBoard();
     topLeftHeight++;
     addCurrentTileToBoard();
+    scoring.handleSingleDropPerCell();
 }
 
 void GameController::softDrop() {
@@ -141,7 +142,6 @@ void GameController::softDrop() {
     for (int turn = 0; turn < 2; ++turn) {
         if (canDrop()) {
             singleDrop();
-            scoring.handleSoftDropPerCell();
         }
     }
 }

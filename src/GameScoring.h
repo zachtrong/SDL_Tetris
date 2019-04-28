@@ -35,7 +35,7 @@ public:
     void updateCombo(int numLineClear);
     bool isLockDifficult(int numLineClear, bool isTSpin);
     void updateIsLastLockDifficult(bool isThisLockDifficult);
-    void handleSoftDropPerCell();
+    void handleSingleDropPerCell();
     void handleHardDropPerCell();
     bool isWallOrFloor(int height, int width);
 };
