@@ -287,7 +287,7 @@ void GameView::drawSceneStart() {
 
 void GameView::drawSceneStartBackground() {
 	SDL_RenderClear(renderer.get());
-	shared_ptr<SDL_Texture> backgroundTexture = createTexture("assets/textures/start_scene.png");
+	shared_ptr<SDL_Texture> backgroundTexture = createTexture("assets/textures/scene_start.png");
 	SDL_RenderCopy(renderer.get(), backgroundTexture.get(), nullptr, &RECT_BACKGROUND);
 	SDL_RenderPresent(renderer.get());
 }
@@ -312,9 +312,15 @@ void GameView::onMouseOutButtonInstruction() {
 	drawSceneStart();
 }
 
-void GameView::drawPauseScene() {
-	auto pauseTexture = createTextureTransparent("assets/textures/instruction.png");
+void GameView::drawScenePause() {
+	auto pauseTexture = createTextureTransparent("assets/textures/scene_pause.png");
 	SDL_RenderCopy(renderer.get(), pauseTexture.get(), nullptr, &RECT_BACKGROUND);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::drawSceneInstruction() {
+	auto instructionTexture = createTextureTransparent("assets/textures/instruction.png");
+	SDL_RenderCopy(renderer.get(), instructionTexture.get(), nullptr, &RECT_BACKGROUND);
 	SDL_RenderPresent(renderer.get());
 }
 

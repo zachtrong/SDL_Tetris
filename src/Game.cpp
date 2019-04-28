@@ -110,12 +110,17 @@ void Game::gameLoop() {
 			return;
 		}
 
-		if (scenes.back() == START) {
-			gameLoopStart();
-		} else if (scenes.back() == PAUSE) {
-			gameLoopPause();
-		} else if (scenes.back() == PLAY) {
-			gameLoopPlay();
+		switch (scenes.back()) {
+			case START:
+				gameLoopStart();
+				break;
+			case PAUSE:
+			case INSTRUCTION:
+				gameLoopPause();
+				break;
+			case PLAY:
+				gameLoopPlay();
+				break;
 		}
 
 		int frameTime = SDL_GetTicks() - frameStart;
@@ -156,7 +161,7 @@ void Game::handleMouseClick() {
 	if (isMouseOverStartButton()) {
 		initGamePlay();
 	} else if (isMouseOverInstructionButton()) {
-		handleGamePause();
+		handleGameInstruction();
 	}
 }
 
@@ -253,17 +258,31 @@ void Game::singleDropAndRender() {
 }
 
 void Game::handleGamePause() {
-	if (scenes.back() != PAUSE) {
+	if (scenes.back() == PAUSE) {
+		backToPreviousScene();
+	} else {
 		SDL_RemoveTimer(autoSingleDropEvent);
 		scenes.push_back(PAUSE);
-		view->drawPauseScene();
+		view->drawScenePause();
+	}
+}
+
+void Game::handleGameInstruction() {
+	if (scenes.back() == INSTRUCTION) {
+		backToPreviousScene();
 	} else {
-		scenes.pop_back();
-		if (scenes.back() == START) {
-			initStart();
-		} else if (scenes.back() == PLAY) {
-			initGamePlay();
-		}
+		SDL_RemoveTimer(autoSingleDropEvent);
+		scenes.push_back(INSTRUCTION);
+		view->drawSceneInstruction();
+	}
+}
+
+void Game::backToPreviousScene() {
+	scenes.pop_back();
+	if (scenes.back() == START) {
+		initStart();
+	} else if (scenes.back() == PLAY) {
+		initGamePlay();
 	}
 }
 

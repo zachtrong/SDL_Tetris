@@ -12,7 +12,8 @@ using namespace std;
 enum Scene {
 	START = 0,
 	PLAY = 1,
-	PAUSE = 2
+	PAUSE = 2,
+	INSTRUCTION = 3
 };
 
 class Game {
@@ -61,6 +62,8 @@ public:
 	void gameLoopPause();
 	void gameLoopPlay();
 	void handleGamePause();
+	void handleGameInstruction();
+	void backToPreviousScene();
 	void finish();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 

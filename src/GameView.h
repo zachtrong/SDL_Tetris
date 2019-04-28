@@ -74,11 +74,12 @@ public:
 
 	void drawScenePlay();
 	void drawSceneStart();
+	void drawScenePause();
+	void drawSceneInstruction();
 	void onMouseOverButtonStart();
 	void onMouseOutButtonStart();
 	void onMouseOverButtonInstruction();
 	void onMouseOutButtonInstruction();
-	void drawPauseScene();
 
     void updateBoard(Board &board);
 	void updateHoldingTile(Tile &tile);
