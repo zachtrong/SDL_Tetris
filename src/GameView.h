@@ -20,10 +20,18 @@ using namespace std;
 /*
     usage GameView::getInstance()->updateBoard(const Board &board);
 */
+
+struct DisplayObject {
+    string path;
+    SDL_Rect rect;
+
+    DisplayObject(string _path, SDL_Rect _rect): path(_path), rect(_rect) {}
+};
+
+
 class GameView {
 private:
     static shared_ptr<GameView> instance;
-	static const SDL_Rect RECT_BACKGROUND;
 	static const SDL_Rect RECT_BORDER_LEFT;
 	static const SDL_Rect RECT_BORDER_RIGHT;
 	static const SDL_Rect RECT_BACKGROUND_SCORE;
@@ -49,7 +57,6 @@ private:
 	void initTextureText();
 
 	void drawBackground();
-	void drawSceneStartBackground();
 	void drawLinesOnBackground();
 
 	void drawTextureText();
@@ -73,18 +80,14 @@ public:
 	void startSDL();
 
 	void drawScenePlay();
-	void drawSceneStart();
 	void drawScenePause();
 	void drawSceneInstruction();
-	void onMouseOverButtonStart();
-	void onMouseOutButtonStart();
-	void onMouseOverButtonInstruction();
-	void onMouseOutButtonInstruction();
 
     void updateBoard(Board &board);
 	void updateHoldingTile(Tile &tile);
 	void updatePreparingTile(vector<Tile> &tiles);
 	void updateScore(int score);
+	void renderDisplayObject(shared_ptr<DisplayObject> displayObject);
 
 	shared_ptr<SDL_Window> getWindow();
 };

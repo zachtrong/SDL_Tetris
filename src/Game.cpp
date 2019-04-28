@@ -13,7 +13,7 @@ shared_ptr<GameSound> Game::sound(GameSound::getInstance());
 
 vector<pair<int, int>> Game::tilePositions;
 mutex Game::eventMutex;
-vector<Scene> Game::scenes;
+vector<SceneX> Game::scenes;
 bool Game::newGame = false;
 SDL_TimerID Game::autoSingleDropEvent;
 
@@ -127,84 +127,6 @@ void Game::gameLoop() {
 		if (frameTime < SDL_DELAY_PER_FRAME) {
 			SDL_Delay(SDL_DELAY_PER_FRAME - frameTime);
 		}
-	}
-}
-
-void Game::gameLoopStart() {
-	if (event.type == SDL_MOUSEMOTION) {
-		handleMouseOver();
-	} else if (event.type == SDL_MOUSEBUTTONUP) {
-		handleMouseClick();
-	}
-}
-
-bool Game::isMouseOverStartButton() {
-	return isMouseOverRect(Constants::RECT_START_BUTTON);
-}
-
-bool Game::isMouseOverRect(const SDL_Rect &rect) {
-	int mouseX, mouseY;
-	SDL_GetMouseState(&mouseX, &mouseY);
-	return (
-		rect.x <= mouseX
-		&& mouseX <= rect.x + rect.w
-		&& rect.y <= mouseY
-		&& mouseY <= rect.y + rect.h
-	);
-}
-
-bool Game::isMouseOverInstructionButton() {
-	return isMouseOverRect(Constants::RECT_INSTRUCTION_BUTTON);
-}
-
-void Game::handleMouseClick() {
-	if (isMouseOverStartButton()) {
-		initGamePlay();
-	} else if (isMouseOverInstructionButton()) {
-		handleGameInstruction();
-	}
-}
-
-void Game::handleMouseOver() {
-	if (isMouseOverStartButton()) {
-		handleMouseOverStart();
-	} else if (isMouseOverInstructionButton()) {
-		handleMouseOverInstruction();
-	} else {
-		handleMouseOverBackground();
-	}
-}
-
-void Game::handleMouseOverStart() {
-	if (!mouseOverStart) {
-		mouseOverStart = true;
-		view->onMouseOverButtonStart();
-	}
-	if (mouseOverInstruction) {
-		mouseOverInstruction = false;
-		view->onMouseOutButtonInstruction();
-	}
-}
-
-void Game::handleMouseOverInstruction() {
-	if (!mouseOverInstruction) {
-		mouseOverInstruction = true;
-		view->onMouseOverButtonInstruction();
-	}
-	if (mouseOverStart) {
-		mouseOverStart = false;
-		view->onMouseOutButtonStart();
-	}
-}
-
-void Game::handleMouseOverBackground() {
-	if (mouseOverStart) {
-		mouseOverStart = false;
-		view->onMouseOutButtonStart();
-	}
-	if (mouseOverInstruction) {
-		mouseOverInstruction = false;
-		view->onMouseOutButtonInstruction();
 	}
 }
 

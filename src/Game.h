@@ -6,10 +6,11 @@
 #include "GameSound.h"
 #include "SDL.h"
 #include "SDL_mixer.h"
+#include "SceneStart.h"
 
 using namespace std;
 
-enum Scene {
+enum SceneX {
 	START = 0,
 	PLAY = 1,
 	PAUSE = 2,
@@ -33,7 +34,7 @@ private:
 	static int lastTimeAccess;
 
 	static bool newGame;
-	static vector<Scene> scenes;
+	static vector<SceneX> scenes;
 	static SDL_TimerID autoSingleDropEvent;
 
 	map<pair<int, int>, FunctionPointer> eventMap;
@@ -41,8 +42,6 @@ private:
 	const Uint8 *keystate;
 	bool running;
 	SDL_Point windowPosition;
-	bool mouseOverStart;
-	bool mouseOverInstruction;
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -55,10 +54,6 @@ public:
 	void initGamePlay();
 	void initEventMap();
 	void gameLoop();
-	void gameLoopStart();
-	bool isMouseOverStartButton();
-	bool isMouseOverInstructionButton();
-	bool isMouseOverRect(const SDL_Rect &rect);
 	void gameLoopPause();
 	void gameLoopPlay();
 	void handleGamePause();
@@ -85,9 +80,4 @@ public:
 	void handleButtonShift();
 	void handleButtonEscape();
 	void handleButtonP();
-	void handleMouseOver();
-	void handleMouseOverStart();
-	void handleMouseOverInstruction();
-	void handleMouseOverBackground();
-	void handleMouseClick();
 };

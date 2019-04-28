@@ -16,8 +16,6 @@ public:
     static const int BOARD_WIDTH;
     static const int BOARD_HEIGHT;
     static const int BOARD_BORDER_SIZE;
-	static const SDL_Rect RECT_START_BUTTON;
-	static const SDL_Rect RECT_INSTRUCTION_BUTTON;
 	static const vector<TileType> MAP_TILE_TYPE;
 
 	static const char* const GAME_TITLE;

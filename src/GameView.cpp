@@ -9,10 +9,6 @@ shared_ptr<GameView> GameView::getInstance() {
     return instance;
 }
 
-const SDL_Rect GameView::RECT_BACKGROUND = {
-	0, 0, 
-	Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT
-};
 const SDL_Rect GameView::RECT_BORDER_LEFT = {
 	Constants::SCREEN_OFFSET - Constants::BOARD_BORDER_SIZE, 0,
 	Constants::BOARD_BORDER_SIZE, Constants::SCREEN_HEIGHT
@@ -273,45 +269,6 @@ void GameView::drawTextureFooter() {
 	SDL_RenderCopy(renderer.get(), textureFooter.get(), NULL, &rect);
 }
 
-void GameView::drawSceneStart() {
-	drawSceneStartBackground();
-	SDL_SetRenderDrawColor(
-		renderer.get(), 0x00, 0x00, 0x00, 0x00
-	);
-	auto startButton = createTextureTransparent("assets/textures/button_start_default.png");
-	SDL_RenderCopy(renderer.get(), startButton.get(), nullptr, &Constants::RECT_START_BUTTON);
-	auto instructionButton = createTextureTransparent("assets/textures/button_instruction_default.png");
-	SDL_RenderCopy(renderer.get(), instructionButton.get(), nullptr, &Constants::RECT_INSTRUCTION_BUTTON);
-	SDL_RenderPresent(renderer.get());
-}
-
-void GameView::drawSceneStartBackground() {
-	SDL_RenderClear(renderer.get());
-	shared_ptr<SDL_Texture> backgroundTexture = createTexture("assets/textures/scene_start.png");
-	SDL_RenderCopy(renderer.get(), backgroundTexture.get(), nullptr, &RECT_BACKGROUND);
-	SDL_RenderPresent(renderer.get());
-}
-
-void GameView::onMouseOverButtonStart() {
-	auto startButton = createTextureTransparent("assets/textures/button_start_mouse_over.png");
-	SDL_RenderCopy(renderer.get(), startButton.get(), nullptr, &Constants::RECT_START_BUTTON);
-	SDL_RenderPresent(renderer.get());
-}
-
-void GameView::onMouseOutButtonStart() {
-	drawSceneStart();
-}
-
-void GameView::onMouseOverButtonInstruction() {
-	auto instructionButton = createTextureTransparent("assets/textures/button_instruction_mouse_over.png");
-	SDL_RenderCopy(renderer.get(), instructionButton.get(), nullptr, &Constants::RECT_INSTRUCTION_BUTTON);
-	SDL_RenderPresent(renderer.get());
-}
-
-void GameView::onMouseOutButtonInstruction() {
-	drawSceneStart();
-}
-
 void GameView::drawScenePause() {
 	auto pauseTexture = createTextureTransparent("assets/textures/scene_pause.png");
 	SDL_RenderCopy(renderer.get(), pauseTexture.get(), nullptr, &RECT_BACKGROUND);
@@ -321,6 +278,12 @@ void GameView::drawScenePause() {
 void GameView::drawSceneInstruction() {
 	auto instructionTexture = createTextureTransparent("assets/textures/instruction.png");
 	SDL_RenderCopy(renderer.get(), instructionTexture.get(), nullptr, &RECT_BACKGROUND);
+	SDL_RenderPresent(renderer.get());
+}
+
+void GameView::renderDisplayObject(shared_ptr<DisplayObject> displayObject) {
+	auto texture = createTextureTransparent(displayObject->path);
+	SDL_RenderCopy(renderer.get(), texture.get(), nullptr, &(displayObject->rect));
 	SDL_RenderPresent(renderer.get());
 }
 
