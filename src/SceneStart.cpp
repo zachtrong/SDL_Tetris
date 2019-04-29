@@ -12,6 +12,7 @@ const SDL_Rect SceneStart::RECT_BUTTON_INSTRUCTION = {
 };
 
 SceneStart::SceneStart() {
+	sceneType = START;
     background = make_shared<DisplayObject>("assets/textures/scene_start.png", RECT_BACKGROUND);
     buttonStart = make_shared<DisplayObject>(
         "assets/textures/button_start_mouse_over.png", 

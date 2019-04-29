@@ -5,6 +5,13 @@
 
 using namespace std;
 
+enum SceneType {
+	START = 0,
+	PLAY = 1,
+	PAUSE = 2,
+	INSTRUCTION = 3
+};
+
 class Scene {
 private:
 public:
@@ -12,6 +19,7 @@ public:
 	static const SDL_Rect RECT_BACKGROUND;
     shared_ptr<DisplayObject> background;
     map<string, shared_ptr<DisplayObject> > displayObjects;
+    SceneType sceneType;
 
     Scene();
     virtual ~Scene();

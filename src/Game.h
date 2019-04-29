@@ -10,13 +10,6 @@
 
 using namespace std;
 
-enum SceneX {
-	START = 0,
-	PLAY = 1,
-	PAUSE = 2,
-	INSTRUCTION = 3
-};
-
 class Game {
 typedef void (Game::*FunctionPointer)();
 private:
