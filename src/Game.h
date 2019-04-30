@@ -13,10 +13,8 @@ using namespace std;
 class Game {
 typedef void (Game::*FunctionPointer)();
 private:
-	static const int TILE_DROP_DELAY;
 	static const int FRAME_PER_SECOND;
 	static const int SDL_DELAY_PER_FRAME;
-	static const int DELAY_CONTINUOUS_KEY;
 	static shared_ptr<Game> instance;
 	static shared_ptr<GameView> view;
 	static shared_ptr<GameController> controller;
@@ -55,22 +53,8 @@ public:
 	void finish();
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 
+	const Uint8* getKeystate();
+
 	static void singleDropAndRender();
 	void handleEventPlay();
-	void handleButtonArrowDown();
-	void handleButtonArrowDownContinuous();
-	void handleButtonArrowUp();
-	void handleButtonArrowUpContinuous();
-	void handleButtonArrowLeft();
-	void handleButtonArrowLeftContinuous();
-	void handleButtonArrowRight();
-	void handleButtonArrowRightContinuous();
-	void handleButtonSpace();
-	void handleButtonZ();
-	void handleButtonX();
-	void handleButtonC();
-	void handleButtonCtrl();
-	void handleButtonShift();
-	void handleButtonEscape();
-	void handleButtonP();
 };

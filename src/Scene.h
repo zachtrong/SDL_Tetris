@@ -1,5 +1,7 @@
 #pragma once
 #include "GameView.h"
+#include "GameController.h"
+#include "GameSound.h"
 #include <map>
 #include <memory>
 
@@ -16,6 +18,8 @@ class Scene {
 private:
 public:
     static shared_ptr<GameView> view;
+    static shared_ptr<GameController> controller;
+	static shared_ptr<GameSound> sound;
 	static const SDL_Rect RECT_BACKGROUND;
     shared_ptr<DisplayObject> background;
     map<string, shared_ptr<DisplayObject> > displayObjects;

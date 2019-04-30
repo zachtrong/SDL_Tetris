@@ -1,6 +1,8 @@
 #include "Scene.h"
 
 shared_ptr<GameView> Scene::view = GameView::getInstance();
+shared_ptr<GameController> Scene::controller = GameController::getInstance();
+shared_ptr<GameSound> Scene::sound = GameSound::getInstance();
 
 const SDL_Rect Scene::RECT_BACKGROUND = {
 	0, 0, 
@@ -11,7 +13,7 @@ Scene::Scene() {
 
 }
 
-Scene::Scene() {
+Scene::~Scene() {
 
 }
 
