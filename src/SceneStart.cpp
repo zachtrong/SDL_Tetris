@@ -10,6 +10,10 @@ const SDL_Rect SceneStart::RECT_BUTTON_INSTRUCTION = {
 	402, 366,
 	120, 33
 };
+const SDL_Rect SceneStart::RECT_BUTTON_HIGH_SCORE = {
+	403, 424,
+	120, 34
+};
 
 SceneStart::SceneStart()
 	:buttonStart(new DisplayObject(
@@ -19,7 +23,11 @@ SceneStart::SceneStart()
     buttonInstruction(new DisplayObject(
         "assets/textures/button_instruction.png", 
         RECT_BUTTON_INSTRUCTION
-    ))
+    )),
+	buttonHighScore(new DisplayObject(
+		"assets/textures/button_high_score.png",
+		RECT_BUTTON_HIGH_SCORE
+	))
 {
     background = make_shared<DisplayObject>("assets/textures/scene_start.png", RECT_BACKGROUND);
 }
@@ -44,6 +52,11 @@ void SceneStart::start() {
 		this
 	);
 	addButton(buttonInstruction, buttonInstructionCallback);
+	function<void ()> buttonHighScoreCallback = bind(
+		&SceneStart::onClickButtonHighScore,
+		this
+	);
+	addButton(buttonHighScore, buttonHighScoreCallback);
 }
 
 SceneType SceneStart::gameLoop(SDL_Event &event) {
@@ -57,4 +70,8 @@ void SceneStart::onClickButtonStart() {
 
 void SceneStart::onClickButtonInstruction() {
 	nextSceneType = INSTRUCTION;
+}
+
+void SceneStart::onClickButtonHighScore() {
+	nextSceneType = ENDGAME;
 }
