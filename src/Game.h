@@ -15,10 +15,15 @@ private:
 	static const int FRAME_PER_SECOND;
 	static const int SDL_DELAY_PER_FRAME;
 	static shared_ptr<Game> instance;
+	static shared_ptr<GameView> view;
+	static shared_ptr<GameSound> sound;
 
 	SDL_Event event;
 	const Uint8 *keystate;
 	bool running;
+
+	void init();
+	void gameLoop();
 public:
 	static shared_ptr<Game> getInstance();
 
@@ -26,21 +31,5 @@ public:
 	virtual ~Game();
 
 	void start();
-	void init();
-	static void initStart();
-	void initGamePlay();
-	void initEventMap();
-	void gameLoop();
-	void gameLoopPause();
-	void gameLoopPlay();
-	void handleGamePause();
-	void handleGameInstruction();
-	void backToPreviousScene();
-	void finish();
-	static Uint32 autoSingleDrop(Uint32 interval, void *param);
-
 	const Uint8* getKeystate();
-
-	static void singleDropAndRender();
-	void handleEventPlay();
 };

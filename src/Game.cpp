@@ -5,10 +5,12 @@ using namespace std;
 const int Game::FRAME_PER_SECOND = 24;
 const int Game::SDL_DELAY_PER_FRAME = 1000 / FRAME_PER_SECOND;
 shared_ptr<Game> Game::instance(nullptr);
+shared_ptr<GameView> Game::view = GameView::getInstance();
+shared_ptr<GameSound> Game::sound = GameSound::getInstance();
 
 Game::Game()
 	:keystate(),
-	running(false),
+	running(false)
 {
 }
 
@@ -28,19 +30,12 @@ void Game::start() {
 	}
 	init();
 	gameLoop();
-	finish();
 }
 
 void Game::init() {
 	view->startSDL();
 	sound->initSound();
-	shared_ptr<SDL_Window> window = view->getWindow();
-	SDL_GetWindowPosition(window.get(), &windowPosition.x, &windowPosition.y);
-	initEventMap();
 	running = true;
-}
-
-void Game::initGamePlay() {
 }
 
 void Game::gameLoop() {
@@ -67,31 +62,6 @@ void Game::gameLoop() {
 	}
 }
 
-void Game::gameLoopPause() {
-	if (event.type == SDL_KEYDOWN) {
-		if (event.key.keysym.sym == SDLK_ESCAPE
-			|| event.key.keysym.sym == SDLK_p) {
-			if (event.key.repeat == 0) {
-				handleGamePause();
-			}
-		}
-	} 
-}
-
-void Game::handleGamePause() {
-	if (scenes.back() == PAUSE) {
-		backToPreviousScene();
-	} else {
-		SDL_RemoveTimer(autoSingleDropEvent);
-		scenes.push_back(PAUSE);
-		view->drawScenePause();
-	}
-}
-
 const Uint8* Game::getKeystate() {
 	return keystate;
-}
-
-void Game::finish() {
-	SDL_RemoveTimer(autoSingleDropEvent);
 }
