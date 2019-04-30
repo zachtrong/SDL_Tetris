@@ -7,6 +7,9 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 #include "SceneStart.h"
+#include "ScenePlay.h"
+#include "ScenePause.h"
+#include "SceneInstruction.h"
 
 using namespace std;
 
@@ -18,6 +21,7 @@ private:
 	static shared_ptr<GameView> view;
 	static shared_ptr<GameSound> sound;
 
+	vector<shared_ptr<Scene>> scenes;
 	SDL_Event event;
 	const Uint8 *keystate;
 	bool running;

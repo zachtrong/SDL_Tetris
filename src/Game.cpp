@@ -9,7 +9,9 @@ shared_ptr<GameView> Game::view = GameView::getInstance();
 shared_ptr<GameSound> Game::sound = GameSound::getInstance();
 
 Game::Game()
-	:keystate(),
+	:scenes(),
+	event(),
+	keystate(),
 	running(false)
 {
 }
@@ -35,6 +37,8 @@ void Game::start() {
 void Game::init() {
 	view->startSDL();
 	sound->initSound();
+	scenes.push_back(shared_ptr<Scene>((Scene*) new SceneStart()));
+	scenes.back()->start();
 	running = true;
 }
 
@@ -53,7 +57,7 @@ void Game::gameLoop() {
 			return;
 		}
 
-		//TODO
+		scenes.back()->gameLoop(event);
 
 		int frameTime = SDL_GetTicks() - frameStart;
 		if (frameTime < SDL_DELAY_PER_FRAME) {

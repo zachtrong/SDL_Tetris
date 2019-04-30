@@ -42,6 +42,7 @@ void Scene::handleMouse(function<void (Button button)> callback) {
 		auto button = buttons[i];
 		if (isMouseOverRect(button.displayObject->rect)) {
 			anyInside = true;
+			togglingButtonDefaultState = false;
 			if (!togglingButtonStates[i]) {
 				togglingButtonStates[i] = true;
 				callback(button);

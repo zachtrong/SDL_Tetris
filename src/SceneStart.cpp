@@ -3,11 +3,11 @@
 using namespace std;
 
 const SDL_Rect SceneStart::RECT_BUTTON_START = {
-	393, 273,
+	390, 271,
 	143, 70
 };
 const SDL_Rect SceneStart::RECT_BUTTON_INSTRUCTION = {
-	404, 368,
+	402, 366,
 	120, 33
 };
 
@@ -33,6 +33,7 @@ void SceneStart::start() {
     view->renderDisplayObject(background);
 
 	clearButton();
+	setButtonDefault(background, nullptr);
 	function<void ()> buttonStartCallback = bind(
 		&SceneStart::onClickButtonStart,
 		this
