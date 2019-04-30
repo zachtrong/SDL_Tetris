@@ -51,8 +51,10 @@ void Scene::start() {
 
 SceneType Scene::gameLoop(SDL_Event &event) {
 	if (event.type == SDL_MOUSEMOTION) {
-		handleMouse([](Button button){
-			if (button.displayObject != nullptr) {
+		handleMouse([this](Button button){
+			if (button.displayObject == nullptr) {
+				redraw();
+			} else {
 				view->renderDisplayObject(button.displayObject);
 			}
 		}, [](__attribute__((unused)) Button button){});
@@ -111,6 +113,10 @@ void Scene::addButton(shared_ptr<DisplayObject> buttonView, function<void ()> on
 void Scene::setButtonDefault(shared_ptr<DisplayObject> buttonView, function<void ()> onMouseClick) {
 	buttonDefault = Button(buttonView, onMouseClick);
 	togglingButtonDefaultState = false;
+}
+
+void Scene::redraw() {
+
 }
 
 void Scene::clearButton() {

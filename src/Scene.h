@@ -59,6 +59,7 @@ public:
     void clearButton();
 
     virtual void start();
+    virtual void redraw();
     virtual SceneType gameLoop(SDL_Event &event);
 
     SceneType getType();

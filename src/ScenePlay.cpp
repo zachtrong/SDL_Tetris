@@ -96,6 +96,9 @@ void ScenePlay::start() {
 
 SceneType ScenePlay::gameLoop(SDL_Event &event) {
 	lock_guard<mutex> lock(eventMutex);
+	if (nextSceneType != sceneType) {
+		return nextSceneType;
+	}
 	if (event.type == SDL_KEYDOWN) {
 		pair<int, int> eventKey = make_pair(event.key.keysym.sym, event.key.repeat);
 		auto it = eventMap.find(eventKey);
