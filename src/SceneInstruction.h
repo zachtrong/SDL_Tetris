@@ -8,4 +8,7 @@ private:
 public:
     SceneInstruction();
     virtual ~SceneInstruction();
+
+    virtual void start();
+    virtual void gameLoop(SDL_Event &event);
 };

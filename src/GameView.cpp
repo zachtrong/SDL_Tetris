@@ -15,8 +15,7 @@ GameView::GameView():
 	renderer(nullptr),
 	tileTextures(),
 	fullTileTextures(),
-	scoringFont(nullptr),
-	colorWhite({0xff, 0xff, 0xff, 0xff}),
+	colorWhite({0xff, 0xff, 0xff, 0xff})
 {
 
 }

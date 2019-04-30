@@ -4,6 +4,7 @@
 #include "GameSound.h"
 #include <map>
 #include <memory>
+#include <functional>
 
 using namespace std;
 
@@ -14,8 +15,28 @@ enum SceneType {
 	INSTRUCTION = 3
 };
 
+struct Button {
+    shared_ptr<DisplayObject> displayObject;
+    function<void ()> callback;
+
+    Button(): displayObject(), callback() {}
+
+    Button(shared_ptr<DisplayObject> _displayObject, function<void (void)> _callback)
+        :displayObject(_displayObject),
+        callback(_callback)
+    {
+    }
+};
+
 class Scene {
 private:
+    vector<bool> togglingButtonStates;
+    bool togglingButtonDefaultState;
+    vector<Button> buttons;
+    Button buttonDefault;
+
+	void handleMouse(function<void (Button button)> callback);
+	bool isMouseOverRect(const SDL_Rect &rect);
 public:
     static shared_ptr<GameView> view;
     static shared_ptr<GameController> controller;
@@ -27,6 +48,10 @@ public:
 
     Scene();
     virtual ~Scene();
+
+    void addButton(shared_ptr<DisplayObject> buttonView, function<void ()> onMouseClick);
+    void setButtonDefault(shared_ptr<DisplayObject> buttonView, function<void ()> onMouseClick);
+    void clearButton();
 
     virtual void start();
     virtual void gameLoop(SDL_Event &event);
