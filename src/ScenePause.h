@@ -13,7 +13,7 @@ public:
     virtual ~ScenePause();
 
     virtual void start();
-    virtual void gameLoop(SDL_Event &event);
+    virtual SceneType gameLoop(SDL_Event &event);
 
     void onClickButtonResume();
     void onClickButtonRestart();

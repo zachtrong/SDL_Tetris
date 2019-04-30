@@ -9,10 +9,12 @@
 using namespace std;
 
 enum SceneType {
+    BACK_TO_PREVIOUS = -1,
 	START = 0,
 	PLAY = 1,
 	PAUSE = 2,
-	INSTRUCTION = 3
+	INSTRUCTION = 3,
+    ENDGAME = 4
 };
 
 struct Button {
@@ -44,15 +46,19 @@ public:
 	static const SDL_Rect RECT_BACKGROUND;
     shared_ptr<DisplayObject> background;
     map<string, shared_ptr<DisplayObject> > displayObjects;
-    SceneType sceneType;
+    SceneType sceneType, nextSceneType;
 
     Scene();
     virtual ~Scene();
+
+    static shared_ptr<Scene> createSceneFromSceneType(SceneType sceneType);
 
     void addButton(shared_ptr<DisplayObject> buttonView, function<void ()> onMouseClick);
     void setButtonDefault(shared_ptr<DisplayObject> buttonView, function<void ()> onMouseClick);
     void clearButton();
 
     virtual void start();
-    virtual void gameLoop(SDL_Event &event);
+    virtual SceneType gameLoop(SDL_Event &event);
+
+    SceneType getType();
 };

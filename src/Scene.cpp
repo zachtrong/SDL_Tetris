@@ -1,4 +1,8 @@
 #include "Scene.h"
+#include "SceneStart.h"
+#include "SceneInstruction.h"
+#include "ScenePlay.h"
+#include "ScenePause.h"
 
 shared_ptr<GameView> Scene::view = GameView::getInstance();
 shared_ptr<GameController> Scene::controller = GameController::getInstance();
@@ -9,18 +13,37 @@ const SDL_Rect Scene::RECT_BACKGROUND = {
 	Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT
 };
 
-Scene::Scene() {
-
+Scene::Scene()
+	:background(),
+	displayObjects(),
+	sceneType(),
+	nextSceneType()
+{
 }
 
 Scene::~Scene() {
 
 }
 
+shared_ptr<Scene> Scene::createSceneFromSceneType(SceneType sceneType) {
+	switch (sceneType) {
+		case START: 
+			return shared_ptr<Scene>((Scene*) new SceneStart());
+		case PLAY: 
+			return shared_ptr<Scene>((Scene*) new ScenePlay());
+		case PAUSE: 
+			return shared_ptr<Scene>((Scene*) new ScenePause());
+		case INSTRUCTION: 
+			return shared_ptr<Scene>((Scene*) new SceneInstruction());
+		default:
+			throw "NO SUCH SCENE!";
+	}
+}
+
 void Scene::start() {
 }
 
-void Scene::gameLoop(SDL_Event &event) {
+SceneType Scene::gameLoop(SDL_Event &event) {
 	if (event.type == SDL_MOUSEMOTION) {
 		handleMouse([](Button button){
 			if (button.displayObject != nullptr) {
@@ -34,6 +57,7 @@ void Scene::gameLoop(SDL_Event &event) {
 			}
 		});
 	}
+	return sceneType;
 }
 
 void Scene::handleMouse(function<void (Button button)> callback) {
@@ -83,4 +107,8 @@ void Scene::clearButton() {
 	togglingButtonStates.clear();
 	buttonDefault = Button();
 	togglingButtonDefaultState = false;
+}
+
+SceneType Scene::getType() {
+	return sceneType;
 }

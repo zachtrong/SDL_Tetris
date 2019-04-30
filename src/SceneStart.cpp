@@ -21,7 +21,7 @@ SceneStart::SceneStart()
         RECT_BUTTON_INSTRUCTION
     ))
 {
-	sceneType = START;
+	sceneType = nextSceneType = START;
     background = make_shared<DisplayObject>("assets/textures/scene_start.png", RECT_BACKGROUND);
 }
 
@@ -46,14 +46,15 @@ void SceneStart::start() {
 	addButton(buttonInstruction, buttonInstructionCallback);
 }
 
-void SceneStart::gameLoop(SDL_Event &event) {
+SceneType SceneStart::gameLoop(SDL_Event &event) {
 	Scene::gameLoop(event);
+	return nextSceneType;
 }
 
 void SceneStart::onClickButtonStart() {
-	//TODO
+	nextSceneType = PLAY;
 }
 
 void SceneStart::onClickButtonInstruction() {
-	//TODO
+	nextSceneType = INSTRUCTION;
 }

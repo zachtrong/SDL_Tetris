@@ -60,7 +60,7 @@ ScenePlay::ScenePlay()
 	backgroundRect(new RectObject(RECT_BACKGROUND, BACKGROUND_COLOR)),
 	backgroundScoring(new RectObject(RECT_BACKGROUND_SCORING, BACKGROUND_COLOR))
 {
-	sceneType = PLAY;
+	sceneType = nextSceneType = PLAY;
 
 	Board &board = *controller->getBoard();
     for (int i = Constants::BOARD_HEIGHT/2; i < Constants::BOARD_HEIGHT; ++i) {
@@ -91,7 +91,7 @@ void ScenePlay::start(bool newGame) {
 	updateViewScoring(controller->getScore());
 }
 
-void ScenePlay::gameLoop(SDL_Event &event) {
+SceneType ScenePlay::gameLoop(SDL_Event &event) {
 	lock_guard<mutex> lock(eventMutex);
 	if (event.type == SDL_KEYDOWN) {
 		pair<int, int> eventKey = make_pair(event.key.keysym.sym, event.key.repeat);
@@ -101,6 +101,7 @@ void ScenePlay::gameLoop(SDL_Event &event) {
 			(this->*fp)();
 		}
 	}
+	return nextSceneType;
 }
 
 void ScenePlay::updateViewScoring(int scoring) {
@@ -148,7 +149,8 @@ void ScenePlay::singleDropAndRender() {
 		controller->collapse();
 		if (!controller->genCurrentTile()) {
 			SDL_RemoveTimer(autoSingleDropEvent);
-			//TODO
+			nextSceneType = ENDGAME;
+			return;
 		}
 		updateViewPreparingTile(*controller->getPreparingTiles());
 	}
@@ -233,7 +235,7 @@ void ScenePlay::handleButtonSpace() {
 		sound->playHardDrop();
 	}
 	if (!controller->genCurrentTile()) {
-		//TODO
+		nextSceneType = ENDGAME;
 		return;
 	}
 	updateViewBoard(*controller->getBoard());
@@ -272,9 +274,9 @@ void ScenePlay::handleButtonShift() {
 }
 
 void ScenePlay::handleButtonEscape() {
-	//TODO
+	nextSceneType = PAUSE;
 }
 
 void ScenePlay::handleButtonP() {
-	//TODO
+	nextSceneType = PAUSE;
 }

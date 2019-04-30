@@ -52,6 +52,6 @@ public:
     virtual ~ScenePlay();
 
     virtual void start(bool newGame);
-    virtual void gameLoop(SDL_Event &event);
+    virtual SceneType gameLoop(SDL_Event &event);
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 };

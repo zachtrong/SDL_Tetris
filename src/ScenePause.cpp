@@ -22,7 +22,7 @@ ScenePause::ScenePause()
         RECT_BUTTON_RESTART
     ))
 {
-	sceneType = PAUSE;
+	sceneType = nextSceneType = PAUSE;
     background = make_shared<DisplayObject>("assets/textures/scene_pause.png", RECT_BACKGROUND);
 }
 
@@ -45,14 +45,15 @@ void ScenePause::start() {
     addButton(buttonRestart, buttonRestartCallback);
 }
 
-void ScenePause::gameLoop(SDL_Event &event) {
+SceneType ScenePause::gameLoop(SDL_Event &event) {
     Scene::gameLoop(event);
+    return nextSceneType;
 }
 
 void ScenePause::onClickButtonResume() {
-    //TODO
+    nextSceneType = BACK_TO_PREVIOUS;
 }
 
 void ScenePause::onClickButtonRestart() {
-    //TODO
+    nextSceneType = PLAY;
 }

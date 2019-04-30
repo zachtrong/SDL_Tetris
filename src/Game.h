@@ -28,6 +28,9 @@ private:
 
 	void init();
 	void gameLoop();
+	void gameLoopActual();
+	void backToPreviousScene();
+	void changeToNextScene(SceneType nextSceneType);
 public:
 	static shared_ptr<Game> getInstance();
 

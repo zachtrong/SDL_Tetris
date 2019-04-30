@@ -37,7 +37,7 @@ void Game::start() {
 void Game::init() {
 	view->startSDL();
 	sound->initSound();
-	scenes.push_back(shared_ptr<Scene>((Scene*) new SceneStart()));
+	scenes.push_back(Scene::createSceneFromSceneType(START));
 	scenes.back()->start();
 	running = true;
 }
@@ -57,13 +57,34 @@ void Game::gameLoop() {
 			return;
 		}
 
-		scenes.back()->gameLoop(event);
+		gameLoopActual();
 
 		int frameTime = SDL_GetTicks() - frameStart;
 		if (frameTime < SDL_DELAY_PER_FRAME) {
 			SDL_Delay(SDL_DELAY_PER_FRAME - frameTime);
 		}
 	}
+}
+
+void Game::gameLoopActual() {
+	SceneType nextSceneType = scenes.back()->gameLoop(event);
+	if (nextSceneType != scenes.back()->getType()) {
+		if (nextSceneType == BACK_TO_PREVIOUS) {
+			backToPreviousScene();
+		} else {
+			changeToNextScene(nextSceneType);
+		}
+	}
+}
+
+void Game::backToPreviousScene() {
+	scenes.pop_back();
+	scenes.back()->start();
+}
+
+void Game::changeToNextScene(SceneType nextSceneType) {
+	scenes.push_back(Scene::createSceneFromSceneType(nextSceneType));
+	scenes.back()->start();
 }
 
 const Uint8* Game::getKeystate() {

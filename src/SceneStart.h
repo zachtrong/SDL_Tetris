@@ -14,7 +14,7 @@ public:
     virtual ~SceneStart();
 
     virtual void start();
-    virtual void gameLoop(SDL_Event &event);
+    virtual SceneType gameLoop(SDL_Event &event);
 
 	void onClickButtonStart();
 	void onClickButtonInstruction();

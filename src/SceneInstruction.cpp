@@ -13,7 +13,7 @@ SceneInstruction::SceneInstruction()
         RECT_BUTTON_OK
     ))
 {
-	sceneType = INSTRUCTION;
+	sceneType = nextSceneType = INSTRUCTION;
     background = make_shared<DisplayObject>("assets/textures/scene_instruction.png", RECT_BACKGROUND);
 }
 
@@ -32,10 +32,11 @@ void SceneInstruction::start() {
 	addButton(buttonOk, buttonOkCallback);
 }
 
-void SceneInstruction::gameLoop(SDL_Event &event) {
+SceneType SceneInstruction::gameLoop(SDL_Event &event) {
     Scene::gameLoop(event);
+    return nextSceneType;
 }
 
 void SceneInstruction::onClickButtonOk() {
-    //TODO
+    nextSceneType = BACK_TO_PREVIOUS;
 }
