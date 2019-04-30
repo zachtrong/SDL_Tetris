@@ -5,10 +5,16 @@ using namespace std;
 
 class ScenePause : public Scene {
 private:
+    static const SDL_Rect RECT_BUTTON_RESUME;
+    static const SDL_Rect RECT_BUTTON_RESTART;
+    shared_ptr<DisplayObject> buttonResume, buttonRestart;
 public:
     ScenePause();
     virtual ~ScenePause();
 
     virtual void start();
     virtual void gameLoop(SDL_Event &event);
+
+    void onClickButtonResume();
+    void onClickButtonRestart();
 };

@@ -2,18 +2,57 @@
 
 using namespace std;
 
-ScenePause::ScenePause() {
+const SDL_Rect ScenePause::RECT_BUTTON_RESUME = {
+    224, 448,
+    187, 70
+};
+
+const SDL_Rect ScenePause::RECT_BUTTON_RESTART = {
+    497, 448,
+    187, 70
+};
+
+ScenePause::ScenePause() 
+    :buttonResume(new DisplayObject(
+        "assets/textures/button_resume.png",
+        RECT_BUTTON_RESUME
+    )),
+    buttonRestart(new DisplayObject(
+        "assets/textures/button_restart",
+        RECT_BUTTON_RESTART
+    ))
+{
 	sceneType = PAUSE;
     background = make_shared<DisplayObject>("assets/textures/scene_pause.png", RECT_BACKGROUND);
 }
 
 ScenePause::~ScenePause() {
-
 }
 
 void ScenePause::start() {
     view->renderDisplayObject(background);
+
+	clearButton();
+	function<void ()> buttonResumeCallback = bind(
+		&ScenePause::onClickButtonResume,
+		this
+	);
+    addButton(buttonResume, buttonResumeCallback);
+	function<void ()> buttonRestartCallback = bind(
+		&ScenePause::onClickButtonRestart,
+		this
+	);
+    addButton(buttonRestart, buttonRestartCallback);
 }
 
 void ScenePause::gameLoop(SDL_Event &event) {
+    Scene::gameLoop(event);
+}
+
+void ScenePause::onClickButtonResume() {
+    //TODO
+}
+
+void ScenePause::onClickButtonRestart() {
+    //TODO
 }
