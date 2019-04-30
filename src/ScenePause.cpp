@@ -22,7 +22,6 @@ ScenePause::ScenePause()
         RECT_BUTTON_RESTART
     ))
 {
-	sceneType = nextSceneType = PAUSE;
     background = make_shared<DisplayObject>("assets/textures/scene_pause.png", RECT_BACKGROUND);
 }
 
@@ -30,6 +29,7 @@ ScenePause::~ScenePause() {
 }
 
 void ScenePause::start() {
+	sceneType = nextSceneType = PAUSE;
     view->renderDisplayObject(background);
 
 	clearButton();

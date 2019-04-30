@@ -3,7 +3,7 @@
 using namespace std;
 
 const SDL_Rect SceneInstruction::RECT_BUTTON_OK = {
-    371, 445,
+    369, 442,
     165, 70
 };
 
@@ -13,7 +13,6 @@ SceneInstruction::SceneInstruction()
         RECT_BUTTON_OK
     ))
 {
-	sceneType = nextSceneType = INSTRUCTION;
     background = make_shared<DisplayObject>("assets/textures/scene_instruction.png", RECT_BACKGROUND);
 }
 
@@ -22,9 +21,11 @@ SceneInstruction::~SceneInstruction() {
 }
 
 void SceneInstruction::start() {
+	sceneType = nextSceneType = INSTRUCTION;
     view->renderDisplayObject(background);
 
 	clearButton();
+    setButtonDefault(background, nullptr);
 	function<void ()> buttonOkCallback = bind(
 		&SceneInstruction::onClickButtonOk,
 		this

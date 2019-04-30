@@ -60,8 +60,6 @@ ScenePlay::ScenePlay()
 	backgroundRect(new RectObject(RECT_BACKGROUND, BACKGROUND_COLOR)),
 	backgroundScoring(new RectObject(RECT_BACKGROUND_SCORING, BACKGROUND_COLOR))
 {
-	sceneType = nextSceneType = PLAY;
-
 	Board &board = *controller->getBoard();
     for (int i = Constants::BOARD_HEIGHT/2; i < Constants::BOARD_HEIGHT; ++i) {
         for (int j = 0; j < Constants::BOARD_WIDTH; ++j) {
@@ -78,6 +76,7 @@ ScenePlay::~ScenePlay() {
 }
 
 void ScenePlay::start(bool newGame) {
+	sceneType = nextSceneType = PLAY;
 	view->renderRectObject({backgroundRect, borderLeft, borderRight});
 	view->renderFontObject({textHold, textNext, textScore, textFooter});
 

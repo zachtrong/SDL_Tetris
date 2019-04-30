@@ -37,7 +37,7 @@ private:
     vector<Button> buttons;
     Button buttonDefault;
 
-	void handleMouse(function<void (Button button)> callback);
+	void handleMouse(function<void (Button button)> callbackRender, function<void (Button button)> callbackClick);
 	bool isMouseOverRect(const SDL_Rect &rect);
 public:
     static shared_ptr<GameView> view;

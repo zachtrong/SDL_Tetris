@@ -49,9 +49,10 @@ SceneType Scene::gameLoop(SDL_Event &event) {
 			if (button.displayObject != nullptr) {
 				view->renderDisplayObject(button.displayObject);
 			}
-		});
+		}, [](__attribute__((unused)) Button button){});
 	} else if (event.type == SDL_MOUSEBUTTONUP) {
-		handleMouse([](Button button){
+		handleMouse([](__attribute__((unused)) Button button){}, 
+		[](Button button){
 			if (button.callback != nullptr) {
 				button.callback();
 			}
@@ -60,24 +61,28 @@ SceneType Scene::gameLoop(SDL_Event &event) {
 	return sceneType;
 }
 
-void Scene::handleMouse(function<void (Button button)> callback) {
+void Scene::handleMouse(function<void (Button button)> callbackRender, function<void (Button button)> callbackClick) {
 	bool anyInside = false;
 	for (size_t i = 0; i < buttons.size(); ++i) {
 		auto button = buttons[i];
 		if (isMouseOverRect(button.displayObject->rect)) {
 			anyInside = true;
 			togglingButtonDefaultState = false;
+			callbackClick(button);
 			if (!togglingButtonStates[i]) {
 				togglingButtonStates[i] = true;
-				callback(button);
+				callbackRender(button);
 			}
 		} else {
 			togglingButtonStates[i] = false;
 		}
 	}
-	if (!anyInside && !togglingButtonDefaultState) {
-		togglingButtonDefaultState = true;
-		callback(buttonDefault);
+	if (!anyInside) {
+		callbackClick(buttonDefault);
+		if (!togglingButtonDefaultState) {
+			togglingButtonDefaultState = true;
+			callbackRender(buttonDefault);
+		}
 	}
 }
 

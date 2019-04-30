@@ -21,7 +21,6 @@ SceneStart::SceneStart()
         RECT_BUTTON_INSTRUCTION
     ))
 {
-	sceneType = nextSceneType = START;
     background = make_shared<DisplayObject>("assets/textures/scene_start.png", RECT_BACKGROUND);
 }
 
@@ -30,6 +29,7 @@ SceneStart::~SceneStart() {
 }
 
 void SceneStart::start() {
+	sceneType = nextSceneType = START;
     view->renderDisplayObject(background);
 
 	clearButton();
