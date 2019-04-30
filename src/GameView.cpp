@@ -152,6 +152,8 @@ void GameView::renderFontObject(shared_ptr<FontObject> fontObject, bool align) {
 	fontObject->rect.x = x - (align ? fontObject->rect.w/2 : 0);
 	fontObject->rect.y = y;
 	SDL_RenderCopy(renderer.get(), texture.get(), NULL, &fontObject->rect);
+	fontObject->rect.x = x;
+	fontObject->rect.y = y;
 	SDL_RenderPresent(renderer.get());
 }
 

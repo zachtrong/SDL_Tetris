@@ -3,12 +3,12 @@
 using namespace std;
 
 const SDL_Rect ScenePause::RECT_BUTTON_RESUME = {
-    224, 448,
+    222, 446,
     187, 70
 };
 
 const SDL_Rect ScenePause::RECT_BUTTON_RESTART = {
-    497, 448,
+    495, 445,
     187, 70
 };
 
@@ -18,7 +18,7 @@ ScenePause::ScenePause()
         RECT_BUTTON_RESUME
     )),
     buttonRestart(new DisplayObject(
-        "assets/textures/button_restart",
+        "assets/textures/button_restart.png",
         RECT_BUTTON_RESTART
     ))
 {
@@ -33,6 +33,7 @@ void ScenePause::start() {
     view->renderDisplayObject(background);
 
 	clearButton();
+    setButtonDefault(background, nullptr);
 	function<void ()> buttonResumeCallback = bind(
 		&ScenePause::onClickButtonResume,
 		this

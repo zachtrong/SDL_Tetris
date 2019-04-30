@@ -18,8 +18,9 @@ private:
 	static const int DELAY_CONTINUOUS_KEY;
 
 	static mutex eventMutex;
-	SDL_TimerID autoSingleDropEvent;
 
+	bool newGame;
+	SDL_TimerID autoSingleDropEvent;
 	map<pair<int, int>, FunctionPointer> eventMap;
 	shared_ptr<FontObject> textHold, textNext, textScore, textScoring, textFooter;
 	shared_ptr<RectObject> borderLeft, borderRight, backgroundRect, backgroundScoring;
@@ -51,7 +52,7 @@ public:
     ScenePlay();
     virtual ~ScenePlay();
 
-    virtual void start(bool newGame);
+    virtual void start();
     virtual SceneType gameLoop(SDL_Event &event);
 	static Uint32 autoSingleDrop(Uint32 interval, void *param);
 };

@@ -32,7 +32,8 @@ const int ScenePlay::DELAY_CONTINUOUS_KEY = 200;
 mutex ScenePlay::eventMutex;
 
 ScenePlay::ScenePlay()
-	:autoSingleDropEvent(),
+	:newGame(true),
+	autoSingleDropEvent(),
 	eventMap({
 		{{SDLK_SPACE, 0}, &ScenePlay::handleButtonSpace},
 		{{SDLK_LEFT, 0}, &ScenePlay::handleButtonArrowLeft},
@@ -73,15 +74,18 @@ ScenePlay::ScenePlay()
 }
 
 ScenePlay::~ScenePlay() {
+	SDL_RemoveTimer(autoSingleDropEvent);
 }
 
-void ScenePlay::start(bool newGame) {
+void ScenePlay::start() {
 	sceneType = nextSceneType = PLAY;
 	view->renderRectObject({backgroundRect, borderLeft, borderRight});
 	view->renderFontObject({textHold, textNext, textScore, textFooter});
 
 	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, this);
 	if (newGame) {
+		newGame = false;
+		controller->clearAll();
 		controller->genCurrentTile();
 	}
 	updateViewBoard(*controller->getBoard());
@@ -113,7 +117,7 @@ void ScenePlay::updateViewBoard(Board &board) {
 	int boardTileObjectId = 0;
     for (int i = Constants::BOARD_HEIGHT/2; i < Constants::BOARD_HEIGHT; ++i) {
         for (int j = 0; j < Constants::BOARD_WIDTH; ++j) {
-			boardTileObjects[boardTileObjectId]->type = board[i][j].getType();
+			boardTileObjects[boardTileObjectId++]->type = board[i][j].getType();
         }
     }
 	view->renderTileObject(boardTileObjects);
@@ -273,9 +277,11 @@ void ScenePlay::handleButtonShift() {
 }
 
 void ScenePlay::handleButtonEscape() {
+	SDL_RemoveTimer(autoSingleDropEvent);
 	nextSceneType = PAUSE;
 }
 
 void ScenePlay::handleButtonP() {
+	SDL_RemoveTimer(autoSingleDropEvent);
 	nextSceneType = PAUSE;
 }
