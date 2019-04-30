@@ -152,7 +152,7 @@ void ScenePlay::singleDropAndRender() {
 		controller->collapse();
 		if (!controller->genCurrentTile()) {
 			SDL_RemoveTimer(autoSingleDropEvent);
-			nextSceneType = ENDGAME;
+			nextSceneType = BEFORE_ENDGAME;
 			return;
 		}
 		updateViewPreparingTile(*controller->getPreparingTiles());
@@ -238,7 +238,7 @@ void ScenePlay::handleButtonSpace() {
 		sound->playHardDrop();
 	}
 	if (!controller->genCurrentTile()) {
-		nextSceneType = ENDGAME;
+		nextSceneType = BEFORE_ENDGAME;
 		return;
 	}
 	updateViewBoard(*controller->getBoard());

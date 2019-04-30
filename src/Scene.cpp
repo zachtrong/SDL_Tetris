@@ -3,6 +3,8 @@
 #include "SceneInstruction.h"
 #include "ScenePlay.h"
 #include "ScenePause.h"
+#include "SceneBeforeEndgame.h"
+#include "SceneEndgame.h"
 
 shared_ptr<GameView> Scene::view = GameView::getInstance();
 shared_ptr<GameController> Scene::controller = GameController::getInstance();
@@ -35,6 +37,10 @@ shared_ptr<Scene> Scene::createSceneFromSceneType(SceneType sceneType) {
 			return shared_ptr<Scene>((Scene*) new ScenePause());
 		case INSTRUCTION: 
 			return shared_ptr<Scene>((Scene*) new SceneInstruction());
+		case BEFORE_ENDGAME:
+			return shared_ptr<Scene>((Scene*) new SceneBeforeEndgame());
+		case ENDGAME:
+			return shared_ptr<Scene>((Scene*) new SceneEndgame());
 		default:
 			throw "NO SUCH SCENE!";
 	}

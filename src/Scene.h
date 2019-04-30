@@ -14,7 +14,8 @@ enum SceneType {
 	PLAY = 1,
 	PAUSE = 2,
 	INSTRUCTION = 3,
-    ENDGAME = 4
+    BEFORE_ENDGAME,
+    ENDGAME = 5,
 };
 
 struct Button {
