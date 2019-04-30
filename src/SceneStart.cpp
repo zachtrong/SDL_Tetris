@@ -13,11 +13,11 @@ const SDL_Rect SceneStart::RECT_BUTTON_INSTRUCTION = {
 
 SceneStart::SceneStart()
 	:buttonStart(new DisplayObject(
-        "assets/textures/button_start_mouse_over.png", 
+        "assets/textures/button_start.png", 
         RECT_BUTTON_START
     )),
     buttonInstruction(new DisplayObject(
-        "assets/textures/button_instruction_mouse_over.png", 
+        "assets/textures/button_instruction.png", 
         RECT_BUTTON_INSTRUCTION
     ))
 {
@@ -34,12 +34,12 @@ void SceneStart::start() {
 
 	clearButton();
 	function<void ()> buttonStartCallback = bind(
-		&SceneStart::onMouseClickButtonStart,
+		&SceneStart::onClickButtonStart,
 		this
 	);
 	addButton(buttonStart, buttonStartCallback);
 	function<void ()> buttonInstructionCallback = bind(
-		&SceneStart::onMouseClickButtonInstruction,
+		&SceneStart::onClickButtonInstruction,
 		this
 	);
 	addButton(buttonInstruction, buttonInstructionCallback);
@@ -49,10 +49,10 @@ void SceneStart::gameLoop(SDL_Event &event) {
 	Scene::gameLoop(event);
 }
 
-void SceneStart::onMouseClickButtonStart() {
-
+void SceneStart::onClickButtonStart() {
+	//TODO
 }
 
-void SceneStart::onMouseClickButtonInstruction() {
-
+void SceneStart::onClickButtonInstruction() {
+	//TODO
 }

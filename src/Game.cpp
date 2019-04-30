@@ -5,20 +5,9 @@ using namespace std;
 const int Game::FRAME_PER_SECOND = 24;
 const int Game::SDL_DELAY_PER_FRAME = 1000 / FRAME_PER_SECOND;
 shared_ptr<Game> Game::instance(nullptr);
-shared_ptr<GameView> Game::view(GameView::getInstance());
-shared_ptr<GameController> Game::controller(GameController::getInstance());
-shared_ptr<GameSound> Game::sound(GameSound::getInstance());
 
-vector<pair<int, int>> Game::tilePositions;
-mutex Game::eventMutex;
-vector<SceneX> Game::scenes;
-bool Game::newGame = false;
-SDL_TimerID Game::autoSingleDropEvent;
-
-Game::Game() 
-	:eventMap(),
-	event(),
-	keystate(),
+Game::Game()
+	:keystate(),
 	running(false),
 {
 }
@@ -38,7 +27,6 @@ void Game::start() {
 		throw Exception(SDL_GetError());
 	}
 	init();
-	initStart();
 	gameLoop();
 	finish();
 }
@@ -50,13 +38,6 @@ void Game::init() {
 	SDL_GetWindowPosition(window.get(), &windowPosition.x, &windowPosition.y);
 	initEventMap();
 	running = true;
-}
-
-void Game::initStart() {
-	scenes.push_back(START);
-	view->drawSceneStart();
-	controller->clearAll();
-	newGame = true;
 }
 
 void Game::initGamePlay() {
@@ -77,18 +58,7 @@ void Game::gameLoop() {
 			return;
 		}
 
-		switch (scenes.back()) {
-			case START:
-				gameLoopStart();
-				break;
-			case PAUSE:
-			case INSTRUCTION:
-				gameLoopPause();
-				break;
-			case PLAY:
-				gameLoopPlay();
-				break;
-		}
+		//TODO
 
 		int frameTime = SDL_GetTicks() - frameStart;
 		if (frameTime < SDL_DELAY_PER_FRAME) {
@@ -115,25 +85,6 @@ void Game::handleGamePause() {
 		SDL_RemoveTimer(autoSingleDropEvent);
 		scenes.push_back(PAUSE);
 		view->drawScenePause();
-	}
-}
-
-void Game::handleGameInstruction() {
-	if (scenes.back() == INSTRUCTION) {
-		backToPreviousScene();
-	} else {
-		SDL_RemoveTimer(autoSingleDropEvent);
-		scenes.push_back(INSTRUCTION);
-		view->drawSceneInstruction();
-	}
-}
-
-void Game::backToPreviousScene() {
-	scenes.pop_back();
-	if (scenes.back() == START) {
-		initStart();
-	} else if (scenes.back() == PLAY) {
-		initGamePlay();
 	}
 }
 

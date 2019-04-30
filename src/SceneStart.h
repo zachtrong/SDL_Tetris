@@ -16,6 +16,6 @@ public:
     virtual void start();
     virtual void gameLoop(SDL_Event &event);
 
-	void onMouseClickButtonStart();
-	void onMouseClickButtonInstruction();
+	void onClickButtonStart();
+	void onClickButtonInstruction();
 };

@@ -133,18 +133,6 @@ shared_ptr<SDL_Texture> GameView::createTextureText(const string &text, int font
 	return textureMessage;
 }
 
-void GameView::drawScenePause() {
-	auto pauseTexture = createTexture("assets/textures/scene_pause.png");
-	SDL_RenderCopy(renderer.get(), pauseTexture.get(), nullptr, &RECT_BACKGROUND);
-	SDL_RenderPresent(renderer.get());
-}
-
-void GameView::drawSceneInstruction() {
-	auto instructionTexture = createTexture("assets/textures/instruction.png");
-	SDL_RenderCopy(renderer.get(), instructionTexture.get(), nullptr, &RECT_BACKGROUND);
-	SDL_RenderPresent(renderer.get());
-}
-
 void GameView::renderDisplayObject(shared_ptr<DisplayObject> displayObject) {
 	auto texture = createTexture(displayObject->path);
 	SDL_RenderCopy(renderer.get(), texture.get(), nullptr, &(displayObject->rect));

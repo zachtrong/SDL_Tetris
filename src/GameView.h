@@ -81,10 +81,6 @@ public:
 
 	void startSDL();
 
-	void drawScenePlay();
-	void drawScenePause();
-	void drawSceneInstruction();
-
 	void renderDisplayObject(shared_ptr<DisplayObject> displayObject);
 	void renderDisplayObject(vector<shared_ptr<DisplayObject>> displayObjects);
 	void renderFontObject(shared_ptr<FontObject> fontObject, bool align = false);
