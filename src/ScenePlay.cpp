@@ -30,10 +30,10 @@ const int ScenePlay::TILE_DROP_DELAY = 750;
 const int ScenePlay::DELAY_CONTINUOUS_KEY = 200;
 
 mutex ScenePlay::eventMutex;
-SDL_TimerID ScenePlay::autoSingleDropEvent;
 
 ScenePlay::ScenePlay()
-	:eventMap({
+	:autoSingleDropEvent(),
+	eventMap({
 		{{SDLK_SPACE, 0}, &ScenePlay::handleButtonSpace},
 		{{SDLK_LEFT, 0}, &ScenePlay::handleButtonArrowLeft},
 		{{SDLK_LEFT, 1}, &ScenePlay::handleButtonArrowLeftContinuous},
@@ -81,7 +81,7 @@ void ScenePlay::start(bool newGame) {
 	view->renderRectObject({backgroundRect, borderLeft, borderRight});
 	view->renderFontObject({textHold, textNext, textScore, textFooter});
 
-	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, this);
 	if (newGame) {
 		controller->genCurrentTile();
 	}
@@ -129,14 +129,15 @@ void ScenePlay::updateViewPreparingTile(vector<Tile> preparingTiles) {
 	}
 	vector<shared_ptr<FullTileObject>> fullTileObjects;
 	for (size_t i = 0; i < preparingTiles.size(); ++i) {
-		fullTileObjects.push_back(make_shared<FullTileObject>(preparingTiles[i], RECT_PREPARING[i]));
+		fullTileObjects.push_back(make_shared<FullTileObject>(preparingTiles[i].getType(), RECT_PREPARING[i]));
 	}
 	view->renderFullTileObject(fullTileObjects);
 }
 
-Uint32 ScenePlay::autoSingleDrop(Uint32 interval, __attribute__((unused)) void *param) {
+Uint32 ScenePlay::autoSingleDrop(Uint32 interval, void *param) {
 	lock_guard<mutex> lock(eventMutex);
-	singleDropAndRender();
+	auto scenePlay = reinterpret_cast<ScenePlay*>(param);
+	scenePlay->singleDropAndRender();
 	return interval;
 }
 
@@ -169,7 +170,7 @@ void ScenePlay::handleButtonArrowDownContinuous() {
 		updateViewBoard(*controller->getBoard());
 		currentTick = lastTimeAccess;
 	}
-	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, this);
 }
 
 void ScenePlay::handleButtonArrowUp() {
@@ -238,7 +239,7 @@ void ScenePlay::handleButtonSpace() {
 	updateViewBoard(*controller->getBoard());
 	updateViewPreparingTile(*controller->getPreparingTiles());
 	updateViewScoring(controller->getScore());
-	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, nullptr);
+	autoSingleDropEvent = SDL_AddTimer(TILE_DROP_DELAY, autoSingleDrop, this);
 }
 
 void ScenePlay::handleButtonZ() {

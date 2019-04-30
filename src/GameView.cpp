@@ -145,7 +145,7 @@ void GameView::renderDisplayObject(vector<shared_ptr<DisplayObject>> displayObje
 	}
 }
 
-void GameView::renderFontObject(shared_ptr<FontObject> fontObject, bool align = false) {
+void GameView::renderFontObject(shared_ptr<FontObject> fontObject, bool align) {
 	int x = fontObject->rect.x;
 	int y = fontObject->rect.y;
 	auto texture = createTextureText(fontObject->text, fontObject->fontSize, &fontObject->rect);

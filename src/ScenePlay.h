@@ -18,11 +18,11 @@ private:
 	static const int DELAY_CONTINUOUS_KEY;
 
 	static mutex eventMutex;
-	static SDL_TimerID autoSingleDropEvent;
+	SDL_TimerID autoSingleDropEvent;
 
+	map<pair<int, int>, FunctionPointer> eventMap;
 	shared_ptr<FontObject> textHold, textNext, textScore, textScoring, textFooter;
 	shared_ptr<RectObject> borderLeft, borderRight, backgroundRect, backgroundScoring;
-	map<pair<int, int>, FunctionPointer> eventMap;
 	vector<shared_ptr<TileObject>> boardTileObjects;
 
 	void singleDropAndRender();

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const SDL_Rect SceneStart::RECT_BUTTON_INSTRUCTION = {
+const SDL_Rect SceneStart::RECT_BUTTON_START = {
 	393, 273,
 	143, 70
 };

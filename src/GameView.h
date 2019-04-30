@@ -20,13 +20,13 @@ using namespace std;
 struct DisplayObject {
     string path;
     SDL_Rect rect;
-    DisplayObject(string _path, SDL_Rect _rect): path(_path), rect(_rect) {}
+    DisplayObject(string _path, const SDL_Rect &_rect): path(_path), rect(_rect) {}
 };
 
 struct RectObject {
 	SDL_Rect rect;
 	SDL_Color color;
-	RectObject(SDL_Rect _rect, SDL_Color _color): rect(_rect), color(_color) {}
+	RectObject(const SDL_Rect &_rect, const SDL_Color &_color): rect(_rect), color(_color) {}
 };
 
 struct FontObject {
@@ -34,19 +34,19 @@ struct FontObject {
 	int fontSize; 
 	SDL_Rect rect; 
 	FontObject(string _text, int _fontSize): text(_text), fontSize(_fontSize), rect() {}
-	FontObject(string _text, int _fontSize, SDL_Rect _rect): text(_text), fontSize(_fontSize), rect(_rect) {} 
+	FontObject(string _text, int _fontSize, const SDL_Rect &_rect): text(_text), fontSize(_fontSize), rect(_rect) {} 
 };
 
 struct TileObject {
 	TileType type;
 	SDL_Rect rect;
-	TileObject(TileType _type, SDL_Rect _rect): type(_type), rect(_rect) {}
+	TileObject(TileType _type, const SDL_Rect &_rect): type(_type), rect(_rect) {}
 };
 
 struct FullTileObject {
 	TileType type;
 	SDL_Rect rect;
-	FullTileObject(TileType _type, SDL_Rect _rect): type(_type), rect(_rect) {}
+	FullTileObject(TileType _type, const SDL_Rect &_rect): type(_type), rect(_rect) {}
 };
 
 class GameView {
