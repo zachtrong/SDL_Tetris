@@ -8,7 +8,7 @@ const SDL_Rect ScenePause::RECT_BUTTON_RESUME = {
 };
 
 const SDL_Rect ScenePause::RECT_BUTTON_RESTART = {
-    495, 445,
+    494, 446,
     187, 70
 };
 
