@@ -37,12 +37,14 @@ SceneEndgame::SceneEndgame()
 	for (size_t i = 0; i < 3u; ++i) {
 		rankings.push_back(Score(make_shared<FontObject>(
 			"user " + to_string(i),
-			26,
-			RECT_RANKING_TOP_NAME[i]
+			36,
+			RECT_RANKING_TOP_NAME[i],
+			true
 		), make_shared<FontObject>(
 			to_string(i * 1000 + 314),
-			26,
-			RECT_RANKING_TOP_SCORE[i]
+			36,
+			RECT_RANKING_TOP_SCORE[i],
+			true
 		)));
 	}
 }

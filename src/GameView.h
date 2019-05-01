@@ -33,8 +33,12 @@ struct FontObject {
 	string text; 
 	int fontSize; 
 	SDL_Rect rect; 
-	FontObject(string _text, int _fontSize): text(_text), fontSize(_fontSize), rect() {}
-	FontObject(string _text, int _fontSize, const SDL_Rect &_rect): text(_text), fontSize(_fontSize), rect(_rect) {} 
+	bool isBold;
+	FontObject(string _text, const SDL_Rect &_rect): text(_text), fontSize(24), rect(_rect), isBold(false) {} 
+	FontObject(string _text, int _fontSize, const SDL_Rect &_rect): 
+		text(_text), fontSize(_fontSize), rect(_rect), isBold(false) {} 
+	FontObject(string _text, int _fontSize, const SDL_Rect &_rect, bool _isBold): 
+		text(_text), fontSize(_fontSize), rect(_rect), isBold(_isBold) {} 
 };
 
 struct TileObject {
@@ -69,7 +73,7 @@ private:
 	void initFullTileTexture();
 	void initTextureText();
 
-	shared_ptr<SDL_Texture> createTextureText(const string &text, int fontSize, SDL_Rect *rect);
+	shared_ptr<SDL_Texture> createTextureText(const string &text, int fontSize, SDL_Rect *rect, bool isBold = false);
 	shared_ptr<SDL_Texture> createTexture(const string &path);
 	shared_ptr<SDL_Surface> createSurface(const string &path);
 	void copyTileToRenderer(Tile *tile);

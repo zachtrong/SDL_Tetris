@@ -119,10 +119,17 @@ void GameView::initTextureText() {
 	}
 }
 
-shared_ptr<SDL_Texture> GameView::createTextureText(const string &text, int fontSize, SDL_Rect *rect) {
-	auto font = PointerDefinition::createTtfFont(
-		TTF_OpenFont("assets/fonts/agency-fb.ttf", fontSize)
-	);
+shared_ptr<SDL_Texture> GameView::createTextureText(const string &text, int fontSize, SDL_Rect *rect, bool isBold) {
+	shared_ptr<TTF_Font> font;
+	if (isBold) {
+		font = PointerDefinition::createTtfFont(
+			TTF_OpenFont("assets/fonts/agency-fb-bold.ttf", fontSize)
+		);
+	} else {
+		font = PointerDefinition::createTtfFont(
+			TTF_OpenFont("assets/fonts/agency-fb.ttf", fontSize)
+		);
+	}
 	shared_ptr<SDL_Surface> surfaceMessage = PointerDefinition::createSdlSurface(
 		TTF_RenderText_Blended(font.get(), text.c_str(), colorWhite)
 	);
@@ -148,7 +155,7 @@ void GameView::renderDisplayObject(vector<shared_ptr<DisplayObject>> displayObje
 void GameView::renderFontObject(shared_ptr<FontObject> fontObject, int align) {
 	int x = fontObject->rect.x;
 	int y = fontObject->rect.y;
-	auto texture = createTextureText(fontObject->text, fontObject->fontSize, &fontObject->rect);
+	auto texture = createTextureText(fontObject->text, fontObject->fontSize, &fontObject->rect, fontObject->isBold);
 	fontObject->rect.x = x;
 	fontObject->rect.y = y;
 	if (align == 1) {
