@@ -145,21 +145,26 @@ void GameView::renderDisplayObject(vector<shared_ptr<DisplayObject>> displayObje
 	}
 }
 
-void GameView::renderFontObject(shared_ptr<FontObject> fontObject, bool align) {
+void GameView::renderFontObject(shared_ptr<FontObject> fontObject, int align) {
 	int x = fontObject->rect.x;
 	int y = fontObject->rect.y;
 	auto texture = createTextureText(fontObject->text, fontObject->fontSize, &fontObject->rect);
-	fontObject->rect.x = x - (align ? fontObject->rect.w/2 : 0);
+	fontObject->rect.x = x;
 	fontObject->rect.y = y;
+	if (align == 1) {
+		fontObject->rect.x = x - fontObject->rect.w/2;
+	} else if (align == 2) {
+		fontObject->rect.x = x - fontObject->rect.w;
+	}
 	SDL_RenderCopy(renderer.get(), texture.get(), NULL, &fontObject->rect);
 	fontObject->rect.x = x;
 	fontObject->rect.y = y;
 	SDL_RenderPresent(renderer.get());
 }
 
-void GameView::renderFontObject(vector<shared_ptr<FontObject>> fontObjects) {
+void GameView::renderFontObject(vector<shared_ptr<FontObject>> fontObjects, int align) {
 	for (auto fontObject : fontObjects) {
-		renderFontObject(fontObject);
+		renderFontObject(fontObject, align);
 	}
 }
 

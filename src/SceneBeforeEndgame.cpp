@@ -4,7 +4,7 @@ using namespace std;
 
 
 const SDL_Rect SceneBeforeEndgame::RECT_EDIT_NAME = {
-	451, 181,
+	451, 185,
 	366, 70
 };
 

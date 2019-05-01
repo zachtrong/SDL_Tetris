@@ -83,8 +83,8 @@ public:
 
 	void renderDisplayObject(shared_ptr<DisplayObject> displayObject);
 	void renderDisplayObject(vector<shared_ptr<DisplayObject>> displayObjects);
-	void renderFontObject(shared_ptr<FontObject> fontObject, bool align = false);
-	void renderFontObject(vector<shared_ptr<FontObject>> fontObjects);
+	void renderFontObject(shared_ptr<FontObject> fontObject, int align = 0);
+	void renderFontObject(vector<shared_ptr<FontObject>> fontObjects, int align = 0);
 	void renderRectObject(shared_ptr<RectObject> rectObject);
 	void renderRectObject(vector<shared_ptr<RectObject>> rectObjects);
 	void renderTileObject(shared_ptr<TileObject> tileObject);
