@@ -127,29 +127,33 @@ bool GameController::canDrop() {
     return can;
 }
 
-void GameController::singleDrop() {
+void GameController::singleDropWithoutScore() {
     if (!canDrop()) {
         return;
     }
     deleteCurrentTileFromBoard();
     topLeftHeight++;
     addCurrentTileToBoard();
-    scoring.handleSingleDropPerCell();
+}
+
+void GameController::singleDrop() {
+    if (canDrop()) {
+        singleDropWithoutScore();
+        scoring.handleSingleDropPerCell();
+    }
 }
 
 void GameController::softDrop() {
     // soft drop: perform 2 single drops
     for (int turn = 0; turn < 2; ++turn) {
-        if (canDrop()) {
-            singleDrop();
-        }
+        singleDrop();
     }
 }
 
 void GameController::hardDrop() {
     // hard drop: perform multiple single drops until the current tile cannot be dropped anymore
     while(canDrop()) {
-        singleDrop();
+        singleDropWithoutScore();
         scoring.handleHardDropPerCell();
     }
 }
@@ -240,7 +244,7 @@ void GameController::hold() {
 vector < pair<int,int> > GameController::getShadow() {
     int oldTopLeftHeight = topLeftHeight;
     while(canDrop()) {
-        singleDrop();
+        singleDropWithoutScore();
     }
     
     vector < pair<int,int> > res = getCurrentTilePositions();

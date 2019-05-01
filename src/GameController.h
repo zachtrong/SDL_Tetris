@@ -45,6 +45,7 @@ public:
     int collapse();
     bool genCurrentTile();
     bool canDrop();
+    void singleDropWithoutScore();
     void singleDrop();
     void softDrop();
     void hardDrop();

@@ -32,10 +32,7 @@ void GameScoring::handleSingleDropPerCell() {
 }
 
 void GameScoring::handleHardDropPerCell() {
-    // 1 point was added by handleSingleDrop(),
-    // 1 point is added now
-    // 2 points per cell in total
-    score += 1;
+    score += 2; // 2 points per cell
     debug();
 }
 
