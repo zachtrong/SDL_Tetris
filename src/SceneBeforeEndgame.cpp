@@ -13,13 +13,14 @@ const SDL_Rect SceneBeforeEndgame::RECT_BUTTON_OK = {
 	165, 70
 };
 
+shared_ptr<FontObject> SceneBeforeEndgame::player(new FontObject(
+    " ", 36, RECT_EDIT_NAME
+));
+
 SceneBeforeEndgame::SceneBeforeEndgame()
 	:buttonOk(new DisplayObject(
         "assets/textures/button_ok_endgame.png", 
         RECT_BUTTON_OK
-    )),
-    name(new FontObject(
-        "", 36, RECT_EDIT_NAME
     ))
 {
     background = make_shared<DisplayObject>("assets/textures/scene_before_endgame.png", RECT_BACKGROUND);
@@ -45,23 +46,28 @@ void SceneBeforeEndgame::start() {
 
 void SceneBeforeEndgame::redraw() {
     view->renderDisplayObject(background);
-    if (name->text.empty()) name->text = "_";
-    view->renderFontObject(name, true);
-    if (name->text[0] == '_') name->text = "";
+    view->renderFontObject(player, true);
 }
 
 SceneType SceneBeforeEndgame::gameLoop(SDL_Event &event) {
 	Scene::gameLoop(event);
     if (event.type == SDL_TEXTINPUT) {
         string inputText = string(event.text.text);
-        if (!inputText.empty() && name->text.size() + inputText.size() <= 16) {
-            name->text = name->text + inputText;
+        if (!inputText.empty()) {
+            if (player->text[0] == ' ') {
+                player->text = inputText;
+            } else if (player->text.size() + inputText.size() <= 16) {
+                player->text = player->text + inputText;
+            }
             redraw();
         }
     } else if (event.type == SDL_KEYDOWN) {
         if (event.key.keysym.sym == SDLK_BACKSPACE) {
-            if (!name->text.empty()) {
-                name->text.pop_back();
+            if (!player->text.empty()) {
+                player->text.pop_back();
+                if (player->text.empty()) {
+                    player->text = " ";
+                }
                 redraw();
             }
         }
@@ -72,4 +78,8 @@ SceneType SceneBeforeEndgame::gameLoop(SDL_Event &event) {
 void SceneBeforeEndgame::onClickButtonOk() {
     SDL_StopTextInput();
 	nextSceneType = ENDGAME;
+}
+
+string SceneBeforeEndgame::getPlayerName() {
+    return player->text;
 }

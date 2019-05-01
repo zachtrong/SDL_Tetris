@@ -1,4 +1,5 @@
 #include "SceneEndgame.h"
+#include "SceneBeforeEndgame.h"
 
 using namespace std;
 
@@ -25,17 +26,22 @@ const SDL_Rect SceneEndgame::RECT_RANKING_USER_SCORE = {
 	275, 54
 };
 
+shared_ptr<GameController> SceneEndgame::controller = GameController::getInstance();
+
 SceneEndgame::SceneEndgame()
 	:buttonOk(new DisplayObject(
         "assets/textures/button_ok_endgame.png", 
         RECT_BUTTON_OK
     )),
 	rankings(),
-	player()
+	player(make_shared<Score>(
+		make_shared<FontObject>(" ", 36, RECT_RANKING_USER_NAME, true),
+		make_shared<FontObject>("123", 36, RECT_RANKING_USER_SCORE, true)
+	))
 {
     background = make_shared<DisplayObject>("assets/textures/scene_endgame.png", RECT_BACKGROUND);
 	for (size_t i = 0; i < 3u; ++i) {
-		rankings.push_back(Score(make_shared<FontObject>(
+		rankings.push_back(make_shared<Score>(make_shared<FontObject>(
 			"user " + to_string(i),
 			36,
 			RECT_RANKING_TOP_NAME[i],
@@ -47,6 +53,7 @@ SceneEndgame::SceneEndgame()
 			true
 		)));
 	}
+	player->user->text = SceneBeforeEndgame::getPlayerName();
 }
 
 SceneEndgame::~SceneEndgame() {
@@ -68,9 +75,11 @@ void SceneEndgame::start() {
 void SceneEndgame::redraw() {
 	view->renderDisplayObject(background);
 	for (auto score : rankings) {
-		view->renderFontObject(score.user);
-		view->renderFontObject(score.score, 2);
+		view->renderFontObject(score->user);
+		view->renderFontObject(score->score, 2);
 	}
+	view->renderFontObject(player->user);
+	view->renderFontObject(player->score, 2);
 }
 
 SceneType SceneEndgame::gameLoop(SDL_Event &event) {

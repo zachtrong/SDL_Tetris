@@ -9,7 +9,7 @@ private:
 	static const SDL_Rect RECT_BUTTON_OK;
     shared_ptr<DisplayObject> buttonOk;
 
-    shared_ptr<FontObject> name;
+    static shared_ptr<FontObject> player;
 public:
     SceneBeforeEndgame();
     virtual ~SceneBeforeEndgame();
@@ -17,6 +17,8 @@ public:
     virtual void start();
     virtual void redraw();
     virtual SceneType gameLoop(SDL_Event &event);
+
+    static string getPlayerName();
 
 	void onClickButtonOk();
 };

@@ -8,6 +8,13 @@
 
 using namespace std;
 
+struct Score {
+    shared_ptr<FontObject> user, score;
+
+    Score(): user(), score() {}
+    Score(shared_ptr<FontObject> _user, shared_ptr<FontObject> _score): user(_user), score(_score) {}
+};
+
 enum SceneType {
     BACK_TO_PREVIOUS = -1,
 	START = 0,
