@@ -127,7 +127,7 @@ void ScenePlay::updateViewBoard(Board &board) {
 	auto shadows = controller->getShadow();
 	for (auto shadow : shadows) {
 		int convertedId = (shadow.first - Constants::BOARD_HEIGHT/2) * Constants::BOARD_WIDTH + shadow.second;
-		if (boardTileObjects[convertedId]->type == EMPTY) {
+		if (0 <= convertedId && convertedId < boardTileObjectId && boardTileObjects[convertedId]->type == EMPTY) {
 			boardTileObjects[convertedId]->type = SHADOW;
 		}
 	}
