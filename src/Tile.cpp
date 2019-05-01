@@ -14,6 +14,8 @@ Tile::~Tile() {
 string Tile::getAssetPath() const {
     if (type == EMPTY) {
         return FILE_PREFIX + "EMPTY" + FILE_SUFFIX;
+    } else if (type == SHADOW) {
+        return FILE_PREFIX + "SHADOW" + FILE_SUFFIX;
     }
     char c = type;
     return FILE_PREFIX + c + FILE_SUFFIX;

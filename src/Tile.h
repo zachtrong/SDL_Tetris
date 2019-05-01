@@ -10,6 +10,7 @@ using namespace std;
 
 enum TileType {
     EMPTY,
+    SHADOW,
     I = 'I', 
     J = 'J', 
     L = 'L', 

@@ -14,15 +14,6 @@ const int Constants::SCREEN_OFFSET = TILE_SIZE * BOARD_WIDTH;
 const int Constants::SCREEN_WIDTH = SCREEN_OFFSET * 2 + TILE_SIZE * BOARD_WIDTH;
 const int Constants::SCREEN_HEIGHT = TILE_SIZE * (BOARD_HEIGHT / 2);
 const int Constants::BOARD_BORDER_SIZE = 2;
-const SDL_Rect Constants::RECT_START_BUTTON = {
-	393, 273,
-	143, 70
-};
-const SDL_Rect Constants::RECT_INSTRUCTION_BUTTON = {
-	404, 368,
-	120, 33
-};
-
 
 const vector<TileType> Constants::MAP_TILE_TYPE = {I, J, L, O, S, T, Z}; 
 
