@@ -106,6 +106,7 @@ shared_ptr<SDL_Surface> GameView::createSurface(const string &path) {
 
 void GameView::initTileTexture() {
 	tileTextures[EMPTY] = createTexture(Tile(EMPTY).getAssetPath());
+	tileTextures[SHADOW] = createTexture(Tile(SHADOW).getAssetPath());
 	fullTileTextures[EMPTY] = createTexture(Tile(EMPTY).getAssetFullTilePath());
 	for (const auto &tileType : Constants::MAP_TILE_TYPE) {
 		tileTextures[tileType] = createTexture(Tile(tileType).getAssetPath());
