@@ -14,7 +14,7 @@ const SDL_Rect SceneBeforeEndgame::RECT_BUTTON_OK = {
 };
 
 shared_ptr<FontObject> SceneBeforeEndgame::player(new FontObject(
-    " ", 36, RECT_EDIT_NAME
+    " ", 36, RECT_EDIT_NAME, true
 ));
 
 SceneBeforeEndgame::SceneBeforeEndgame()
@@ -31,6 +31,7 @@ SceneBeforeEndgame::~SceneBeforeEndgame() {
 
 void SceneBeforeEndgame::start() {
 	sceneType = nextSceneType = BEFORE_ENDGAME;
+    player->text = " ";
     view->renderDisplayObject(background);
 
 	clearButton();

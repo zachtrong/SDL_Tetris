@@ -3,6 +3,7 @@
 
 using namespace std;
 
+const string SceneEndgame::DATA_RANKING_FILE = "data_ranking.txt";
 const SDL_Rect SceneEndgame::RECT_BUTTON_OK = {
 	368, 460,
 	165, 70
@@ -36,24 +37,57 @@ SceneEndgame::SceneEndgame()
 	rankings(),
 	player(make_shared<Score>(
 		make_shared<FontObject>(" ", 36, RECT_RANKING_USER_NAME, true),
-		make_shared<FontObject>("123", 36, RECT_RANKING_USER_SCORE, true)
+		make_shared<FontObject>("0", 36, RECT_RANKING_USER_SCORE, true)
 	))
 {
     background = make_shared<DisplayObject>("assets/textures/scene_endgame.png", RECT_BACKGROUND);
+}
+
+void SceneEndgame::setUpData() {
+	player->user->text = SceneBeforeEndgame::getPlayerName();
+	player->score->text = to_string(controller->getScore());
+
+	fstream fs;
+	fs.open("data_ranking.txt", fstream::in);
+	vector<pair<string, string>> data(0);
+	bool isDataHavingCurrentPlayer = false;
 	for (size_t i = 0; i < 3u; ++i) {
+		string user = " ";
+		string score = "0";
+		getline(fs, user);
+		getline(fs, score);
+		if (user == player->user->text && score == player->score->text) {
+			isDataHavingCurrentPlayer = true;
+		}
+		data.emplace_back(user, score);
+		if (!isDataHavingCurrentPlayer) {
+			auto dataTop = data.back();
+			if (stoi(data.back().second) < controller->getScore()) {
+				isDataHavingCurrentPlayer = true;
+				data.pop_back();
+				data.emplace_back(player->user->text, player->score->text);
+				data.push_back(dataTop);
+			}
+		}
+	}
+	while (data.size() > 3u) {
+		data.pop_back();
+	}
+	fs.close();
+
+	fs.open("data_ranking.txt", fstream::out);
+	for (size_t i = 0; i < data.size(); ++i) {
+		fs << data[i].first << endl;
+		fs << data[i].second << endl;
 		rankings.push_back(make_shared<Score>(make_shared<FontObject>(
-			"user " + to_string(i),
-			36,
-			RECT_RANKING_TOP_NAME[i],
-			true
+			data[i].first, 36,
+			RECT_RANKING_TOP_NAME[i], true
 		), make_shared<FontObject>(
-			to_string(i * 1000 + 314),
-			36,
-			RECT_RANKING_TOP_SCORE[i],
-			true
+			data[i].second, 36,
+			RECT_RANKING_TOP_SCORE[i], true
 		)));
 	}
-	player->user->text = SceneBeforeEndgame::getPlayerName();
+	fs.close();
 }
 
 SceneEndgame::~SceneEndgame() {
@@ -61,6 +95,7 @@ SceneEndgame::~SceneEndgame() {
 }
 
 void SceneEndgame::start() {
+	setUpData();
 	sceneType = nextSceneType = BEFORE_ENDGAME;
 	redraw();
 
