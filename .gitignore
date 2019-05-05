@@ -15,3 +15,6 @@
 build_test/
 build/
 release/
+
+# temporary files
+data_ranking.txt
