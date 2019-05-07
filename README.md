@@ -13,7 +13,22 @@ Build release application into `release/` directory
 4. `scripts/test.bat`
 Run some basic tests of implementation
 
-## Note
+## Program flow
 
-Project uses smart pointer and various advanced techniques known as design pattern
-So be careful to understand before implement
+This game uses [MVC Architecture](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) in a basic and crude way.  
+
+### `Controller` classes
+
++ GameSound
++ GameController
+
+### `View` classes
+
++ GameView
++ Scene ans its descendent
+
+### `Model` classes
+
++ Model
+
+`Game` class is responsible for receiving `SDL_Event` and then handle such as change `Scene` or pass it to the current `Scene`  
